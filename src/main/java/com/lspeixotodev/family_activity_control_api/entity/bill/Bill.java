@@ -4,29 +4,39 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Objects;
+import java.util.UUID;
 
 @Entity
 @Table(name = "bill")
 public class Bill {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private UUID id;
 
+    @Column(nullable = false, columnDefinition = "TEXT", length = 50)
     private String title;
 
+    @Column(nullable = false, columnDefinition = "TEXT", length = 50)
     private String owner;
 
-    private Double value;
+    private BigDecimal amount;
 
+    @Column(nullable = false, columnDefinition = "TEXT", length = 50)
     private String category;
 
+    @Column(nullable = false, columnDefinition = "TEXT", length = 100)
     private String description;
 
     @Column(name = "finish_at", nullable = false, updatable = false)
     private Date finishAt;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, columnDefinition = "TEXT", length = 50)
+    private BillType type;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     @CreationTimestamp
@@ -36,18 +46,14 @@ public class Bill {
     @UpdateTimestamp
     private Date updatedAt;
 
-    @Enumerated(EnumType.STRING)
-    private BillType type;
-
     public Bill() {
-
     }
 
-    public Bill(Long id, String title, String owner, Double value, String category, String description, Date finishAt, Date createdAt, Date updatedAt, BillType type) {
+    public Bill(UUID id, String title, String owner, BigDecimal amount, String category, String description, Date finishAt, Date createdAt, Date updatedAt, BillType type) {
         this.id = id;
         this.title = title;
         this.owner = owner;
-        this.value = value;
+        this.amount = amount;
         this.category = category;
         this.description = description;
         this.finishAt = finishAt;
@@ -56,10 +62,10 @@ public class Bill {
         this.type = type;
     }
 
-    public Bill(String title, String owner, Double value, String category, String description, Date finishAt, Date createdAt, Date updatedAt, BillType type) {
+    public Bill(String title, String owner, BigDecimal amount, String category, String description, Date finishAt, Date createdAt, Date updatedAt, BillType type) {
         this.title = title;
         this.owner = owner;
-        this.value = value;
+        this.amount = amount;
         this.category = category;
         this.description = description;
         this.finishAt = finishAt;
@@ -68,8 +74,28 @@ public class Bill {
         this.type = type;
     }
 
-    public Long getId() {
+    public UUID getId() {
         return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
     public String getTitle() {
@@ -88,12 +114,12 @@ public class Bill {
         this.owner = owner;
     }
 
-    public Double getValue() {
-        return value;
+    public BigDecimal getValue() {
+        return amount;
     }
 
-    public void setValue(Double value) {
-        this.value = value;
+    public void setValue(BigDecimal amount) {
+        this.amount = amount;
     }
 
     public String getCategory() {
