@@ -1,10 +1,10 @@
-package com.lspeixotodev.family_activity_control_api.dto;
+package com.lspeixotodev.family_activity_control_api.dto.bill;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.lspeixotodev.family_activity_control_api.entity.bill.BillType;
+import com.lspeixotodev.family_activity_control_api.infra.validators.UniqueBillTitle;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -13,30 +13,29 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Objects;
 
-public class BillDTO {
+public class CreateBillDTO {
 
     private String id;
 
-    @NotEmpty(message = "O Título é obrigatório!")
-    @Size(min = 3, message = "O Título deve conter no mínimo 3 caracteres!")
+    @NotEmpty(message = "Title is mandatory!")
+    @Size(min = 3, message = "The Title must contain at least 3 characters!")
+    @UniqueBillTitle(message = "The Title must be unique!")
     private String title;
 
-    @NotEmpty(message = "O Responsável é obrigatório!")
-    @Size(min = 3, message = "O Responsável deve conter no mínimo 3 caracteres!")
+    @NotEmpty(message = "The Owner is mandatory!")
+    @Size(min = 3, message = "The Owner must contain at least 3 characters!")
     private String owner;
 
     private BigDecimal amount = new BigDecimal(0);
 
-    @NotEmpty(message = "A categoria é obrigatória!")
-    @Size(min = 3, message = "A categoria deve conter no mínimo 3 caracteres!")
+    @NotEmpty(message = "The Category is mandatory!")
+    @Size(min = 3, message = "The Category must contain at least 3 characters!")
     private String category;
 
-    @NotEmpty(message = "A descrição é obrigatória!")
-    @Size(min = 3, message = "A descrição deve conter no mínimo 3 caracteres!")
+    @NotEmpty(message = "The Description is mandatory!")
+    @Size(min = 3, message = "The Description must contain at least 3 characters!")
     private String description;
 
-    @NotNull(message = "A data de vencimento é obrigatória!")
-    @Future
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "America/Sao_Paulo")
     private Date finishAt;
 
@@ -49,13 +48,13 @@ public class BillDTO {
     private Date updatedAt;
 
     @Enumerated(EnumType.STRING)
-    @NotNull(message = "O tipo é obrigatória!")
+    @NotNull(message = "Type is required!")
     private BillType type = BillType.VARIABLE;
 
-    public BillDTO() {
+    public CreateBillDTO() {
     }
 
-    public BillDTO(String id, String title, String owner, BigDecimal amount, String category, String description, Date finishAt, Date createdAt, Date updatedAt, BillType type) {
+    public CreateBillDTO(String id, String title, String owner, BigDecimal amount, String category, String description, Date finishAt, Date createdAt, Date updatedAt, BillType type) {
         this.id = id;
         this.title = title;
         this.owner = owner;
@@ -68,7 +67,7 @@ public class BillDTO {
         this.type = type;
     }
 
-    public BillDTO(String title, String owner, BigDecimal amount, String category, String description, Date finishAt, Date createdAt, Date updatedAt, BillType type) {
+    public CreateBillDTO(String title, String owner, BigDecimal amount, String category, String description, Date finishAt, Date createdAt, Date updatedAt, BillType type) {
         this.title = title;
         this.owner = owner;
         this.amount = amount;
@@ -110,14 +109,6 @@ public class BillDTO {
 
     public void setOwner(String owner) {
         this.owner = owner;
-    }
-
-    public BigDecimal getValue() {
-        return amount;
-    }
-
-    public void setValue(BigDecimal amount) {
-        this.amount = amount;
     }
 
     public String getCategory() {
@@ -172,8 +163,8 @@ public class BillDTO {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        BillDTO billDTO = (BillDTO) o;
-        return Objects.equals(id, billDTO.id);
+        CreateBillDTO CreateBillDTO = (CreateBillDTO) o;
+        return Objects.equals(id, CreateBillDTO.id);
     }
 
     @Override

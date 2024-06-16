@@ -1,55 +1,54 @@
-package com.lspeixotodev.family_activity_control_api.entity.bill;
+package com.lspeixotodev.family_activity_control_api.dto.bill;
 
-import jakarta.persistence.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.lspeixotodev.family_activity_control_api.entity.bill.BillType;
+import com.lspeixotodev.family_activity_control_api.infra.validators.UniqueBillTitle;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Objects;
-import java.util.UUID;
 
-@Entity
-@Table(name = "bill", uniqueConstraints = {@UniqueConstraint(columnNames = "title")})
-public class Bill {
+public class BillDTO {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID id;
+    private String id;
 
-    @Column(nullable = false, unique = true, length = 50)
+
     private String title;
 
-    @Column(nullable = false, length = 50)
+
     private String owner;
 
-    private BigDecimal amount;
+    private BigDecimal amount = new BigDecimal(0);
 
-    @Column(nullable = false, length = 50)
+
     private String category;
 
-    @Column(nullable = false, length = 100)
     private String description;
 
-    @Column(name = "finish_at", nullable = false)
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "America/Sao_Paulo")
     private Date finishAt;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false, columnDefinition = "TEXT", length = 50)
-    private BillType type;
-
-    @Column(name = "created_at", nullable = false, updatable = false)
-    @CreationTimestamp
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "America/Sao_Paulo")
+    @JsonIgnore
     private Date createdAt;
 
-    @Column(name = "updated_at", nullable = false)
-    @UpdateTimestamp
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "America/Sao_Paulo")
+    @JsonIgnore
     private Date updatedAt;
 
-    public Bill() {
+    @Enumerated(EnumType.STRING)
+    private BillType type = BillType.VARIABLE;
+
+    public BillDTO() {
     }
 
-    public Bill(UUID id, String title, String owner, BigDecimal amount, String category, String description, Date finishAt, Date createdAt, Date updatedAt, BillType type) {
+    public BillDTO(String id, String title, String owner, BigDecimal amount, String category, String description, Date finishAt, Date createdAt, Date updatedAt, BillType type) {
         this.id = id;
         this.title = title;
         this.owner = owner;
@@ -62,7 +61,7 @@ public class Bill {
         this.type = type;
     }
 
-    public Bill(String title, String owner, BigDecimal amount, String category, String description, Date finishAt, Date createdAt, Date updatedAt, BillType type) {
+    public BillDTO(String title, String owner, BigDecimal amount, String category, String description, Date finishAt, Date createdAt, Date updatedAt, BillType type) {
         this.title = title;
         this.owner = owner;
         this.amount = amount;
@@ -74,11 +73,11 @@ public class Bill {
         this.type = type;
     }
 
-    public UUID getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(UUID id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -88,14 +87,6 @@ public class Bill {
 
     public void setAmount(BigDecimal amount) {
         this.amount = amount;
-    }
-
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
     }
 
     public String getTitle() {
@@ -113,8 +104,6 @@ public class Bill {
     public void setOwner(String owner) {
         this.owner = owner;
     }
-
-
 
     public String getCategory() {
         return category;
@@ -144,8 +133,16 @@ public class Bill {
         return createdAt;
     }
 
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
     public Date getUpdatedAt() {
         return updatedAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
     public BillType getType() {
@@ -160,8 +157,8 @@ public class Bill {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Bill bill = (Bill) o;
-        return Objects.equals(id, bill.id);
+        BillDTO CreateBillDTO = (BillDTO) o;
+        return Objects.equals(id, CreateBillDTO.id);
     }
 
     @Override
