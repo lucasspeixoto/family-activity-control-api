@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.time.Instant;
+import java.time.LocalDateTime;
 
 
 public class ErrorDetail implements Serializable {
@@ -12,8 +12,8 @@ public class ErrorDetail implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'", timezone = "America/Sao_Paulo")
-    private Instant timestamp;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "America/Sao_Paulo")
+    private LocalDateTime timestamp;
 
     private String message;
 
@@ -25,18 +25,18 @@ public class ErrorDetail implements Serializable {
 
     }
 
-    public ErrorDetail(Instant timestamp, String message, String details, Integer status) {
+    public ErrorDetail(LocalDateTime timestamp, String message, String details, Integer status) {
         this.timestamp = timestamp;
         this.message = message;
         this.details = details;
         this.status = status;
     }
 
-    public Instant getTimestamp() {
+    public LocalDateTime getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(Instant timestamp) {
+    public void setTimestamp(LocalDateTime timestamp) {
         this.timestamp = timestamp;
     }
 

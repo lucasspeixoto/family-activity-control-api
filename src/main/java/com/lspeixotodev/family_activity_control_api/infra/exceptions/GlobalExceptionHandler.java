@@ -1,6 +1,7 @@
 package com.lspeixotodev.family_activity_control_api.infra.exceptions;
 
 import com.lspeixotodev.family_activity_control_api.dto.ErrorDetail;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.*;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -10,6 +11,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +26,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         HttpStatus status = HttpStatus.NOT_FOUND;
 
         ErrorDetail errorDetails = new ErrorDetail(
-                Instant.now(),
+                LocalDateTime.now(),
                 exception.getMessage(),
                 webRequest.getDescription(false),
                 status.value()
@@ -45,7 +47,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         HttpStatus status = HttpStatus.CONFLICT;
 
         ErrorDetail errorDetails = new ErrorDetail(
-                Instant.now(),
+                LocalDateTime.now(),
                 exception.getMessage(),
                 webRequest.getDescription(false),
                 status.value()
@@ -83,7 +85,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         HttpStatus specificStatus = HttpStatus.UNPROCESSABLE_ENTITY;
 
         ErrorDetail errorDetails = new ErrorDetail(
-                Instant.now(),
+                LocalDateTime.now(),
                 joinedErrors,
                 webRequest.getDescription(false),
                 specificStatus.value()
@@ -104,8 +106,29 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         HttpStatus status = HttpStatus.BAD_REQUEST;
 
         ErrorDetail errorDetails = new ErrorDetail(
-                Instant.now(),
+                LocalDateTime.now(),
                 "Some argument is invalid check please!",
+                webRequest.getDescription(false),
+                status.value()
+        );
+
+        return ResponseEntity
+                .status(status)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(errorDetails);
+    }
+
+    @ExceptionHandler({DataIntegrityViolationException.class})
+    public ResponseEntity<ErrorDetail> handleDataIntegrityViolationException(
+            DataIntegrityViolationException exception,
+            WebRequest webRequest
+    ) {
+
+        HttpStatus status = HttpStatus.CONFLICT;
+
+        ErrorDetail errorDetails = new ErrorDetail(
+                LocalDateTime.now(),
+                exception.getLocalizedMessage(),
                 webRequest.getDescription(false),
                 status.value()
         );
@@ -124,7 +147,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
 
         ErrorDetail errorDetails = new ErrorDetail(
-                Instant.now(),
+                LocalDateTime.now(),
                 exception.getMessage(),
                 webRequest.getDescription(false),
                 status.value()
