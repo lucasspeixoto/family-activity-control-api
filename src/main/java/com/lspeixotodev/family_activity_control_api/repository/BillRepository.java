@@ -10,5 +10,6 @@ public interface BillRepository extends JpaRepository<Bill, UUID> {
 
     boolean existsByTitle(String title);
 
-    Optional<Bill> findByTitleIgnoreCase(String title);
+    Optional<Bill> findByTitleContainingIgnoreCase(String title);
+
 }

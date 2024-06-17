@@ -22,7 +22,6 @@ public class ErrorDetail implements Serializable {
     private Integer status;
 
     public ErrorDetail() {
-
     }
 
     public ErrorDetail(LocalDateTime timestamp, String message, String details, Integer status) {

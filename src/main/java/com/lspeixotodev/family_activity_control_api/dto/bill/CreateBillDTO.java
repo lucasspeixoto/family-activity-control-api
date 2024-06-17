@@ -19,7 +19,7 @@ public class CreateBillDTO {
 
     @NotEmpty(message = "Title is mandatory!")
     @Size(min = 3, message = "The Title must contain at least 3 characters!")
-    @UniqueBillTitle(message = "The Title must be unique!")
+    @UniqueBillTitle(message = "This Bill title already exists!")
     private String title;
 
     @NotEmpty(message = "The Owner is mandatory!")

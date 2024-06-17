@@ -3,12 +3,8 @@ package com.lspeixotodev.family_activity_control_api.dto.bill;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.lspeixotodev.family_activity_control_api.entity.bill.BillType;
-import com.lspeixotodev.family_activity_control_api.infra.validators.UniqueBillTitle;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -18,14 +14,11 @@ public class BillDTO {
 
     private String id;
 
-
     private String title;
-
 
     private String owner;
 
     private BigDecimal amount = new BigDecimal(0);
-
 
     private String category;
 

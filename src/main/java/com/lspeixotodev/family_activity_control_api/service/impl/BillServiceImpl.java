@@ -6,14 +6,11 @@ import com.lspeixotodev.family_activity_control_api.dto.bill.UpdateBillDTO;
 import com.lspeixotodev.family_activity_control_api.entity.bill.Bill;
 import com.lspeixotodev.family_activity_control_api.infra.exceptions.ResourceNotFoundException;
 import com.lspeixotodev.family_activity_control_api.mapper.BillMapper;
-import com.lspeixotodev.family_activity_control_api.mapper.CreateBillMapper;
-import com.lspeixotodev.family_activity_control_api.mapper.UpdateBillMapper;
 import com.lspeixotodev.family_activity_control_api.repository.BillRepository;
 import com.lspeixotodev.family_activity_control_api.service.BillService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -21,18 +18,8 @@ import java.util.UUID;
 @Service
 public class BillServiceImpl implements BillService {
 
-    DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-    DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-
-
     @Autowired
     private BillRepository billRepository;
-
-    @Autowired
-    private CreateBillMapper createBillMapper;
-
-    @Autowired
-    private UpdateBillMapper updateBillMapper;
 
     @Autowired
     private BillMapper billMapper;
@@ -40,18 +27,18 @@ public class BillServiceImpl implements BillService {
     @Override
     public CreateBillDTO createBill(CreateBillDTO CreateBillDTO) {
 
-        Bill bill = this.createBillMapper.toEntity(CreateBillDTO);
+        Bill bill = this.billMapper.createBillDtoToEntity(CreateBillDTO);
 
         Bill savedBill = billRepository.save(bill);
 
-        return this.createBillMapper.toDTO(savedBill);
+        return this.billMapper.entityToCreateBillDTO(savedBill);
     }
 
     @Override
     public List<CreateBillDTO> getAllBills() {
         List<Bill> bills = billRepository.findAll();
 
-        return this.createBillMapper.toDTOs(bills);
+        return this.billMapper.entitiesToCreateBillDtos(bills);
     }
 
     @Override
@@ -64,7 +51,7 @@ public class BillServiceImpl implements BillService {
                         () -> new ResourceNotFoundException("Conta", "id", id)
                 );
 
-        return this.createBillMapper.toDTO(entity);
+        return this.billMapper.entityToCreateBillDTO(entity);
     }
 
     @Override
@@ -82,7 +69,7 @@ public class BillServiceImpl implements BillService {
 
         Bill updatedBill = billRepository.save(changedBill);
 
-        return this.updateBillMapper.toDTO(updatedBill);
+        return this.billMapper.entityToUpdateBillDTO(updatedBill);
     }
 
     private static Bill setBillFieldsHandler(UpdateBillDTO updateBillDTO, Bill existingBill) {
@@ -109,13 +96,13 @@ public class BillServiceImpl implements BillService {
 
         billRepository.deleteById(existingBill.getId());
 
-        return this.createBillMapper.toDTO(existingBill);
+        return this.billMapper.entityToCreateBillDTO(existingBill);
     }
 
     @Override
     public BillDTO findBillByTitle(String title) {
 
-        Optional<Bill> optionalBill = billRepository.findByTitleIgnoreCase(title);
+        Optional<Bill> optionalBill = billRepository.findByTitleContainingIgnoreCase(title);
 
         if (optionalBill.isEmpty()) {
             throw new ResourceNotFoundException("Bill", "title", title);
