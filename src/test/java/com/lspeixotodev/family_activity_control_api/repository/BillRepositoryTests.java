@@ -2,18 +2,13 @@ package com.lspeixotodev.family_activity_control_api.repository;
 
 import com.lspeixotodev.family_activity_control_api.__mocks__.MockBill;
 import com.lspeixotodev.family_activity_control_api.entity.bill.Bill;
-import com.lspeixotodev.family_activity_control_api.entity.bill.BillType;
 import org.junit.jupiter.api.*;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-import java.math.BigDecimal;
-import java.time.Instant;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,12 +25,15 @@ public class BillRepositoryTests {
 
     public Bill bill;
 
+    public Bill secondBill;
+
     @InjectMocks
     public MockBill mockBill;
 
     @BeforeEach
     public void config() {
         this.bill = mockBill.getBill();
+        this.secondBill = mockBill.getSecondBill();
     }
 
     @Test
@@ -67,10 +65,8 @@ public class BillRepositoryTests {
     @Order(3)
     public void billRepository_FindAll_ReturnsMoreThanOneBill() {
 
-        Bill anotherBill = mockBill.getSecondBill();
-
         billRepository.save(this.bill);
-        billRepository.save(anotherBill);
+        billRepository.save(this.secondBill);
 
         List<Bill> listOfBills = billRepository.findAll();
 
@@ -83,7 +79,7 @@ public class BillRepositoryTests {
     @Order(4)
     public void billRepository_UpdateABill_ReturnsUpdateBill() {
 
-       String updatedTitle = "Updated title";
+        String updatedTitle = "Updated title";
 
         Bill savedBill = billRepository.save(this.bill);
 
