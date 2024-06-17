@@ -1,0 +1,5 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:family-activity-control;DB_CLOSE_DELAY=-1;DATABASE_TO_UPPER=false
+  flyway:
+    enabled: false
