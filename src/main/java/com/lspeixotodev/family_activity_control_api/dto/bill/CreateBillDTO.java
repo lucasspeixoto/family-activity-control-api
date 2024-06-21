@@ -17,7 +17,7 @@ public class CreateBillDTO {
 
     private String id;
 
-    @NotEmpty(message = "Title is mandatory!")
+    @NotEmpty(message = "The Title is mandatory!")
     @Size(min = 3, message = "The Title must contain at least 3 characters!")
     @UniqueBillTitle(message = "This Bill title already exists!")
     private String title;
@@ -37,6 +37,7 @@ public class CreateBillDTO {
     private String description;
 
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "America/Sao_Paulo")
+    @NotNull(message = "The Finish At is mandatory!")
     private Date finishAt;
 
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "America/Sao_Paulo")

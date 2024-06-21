@@ -4,12 +4,14 @@ import com.lspeixotodev.family_activity_control_api.controller.BillController;
 import com.lspeixotodev.family_activity_control_api.dto.bill.BillDTO;
 import com.lspeixotodev.family_activity_control_api.dto.bill.CreateBillDTO;
 import com.lspeixotodev.family_activity_control_api.dto.bill.UpdateBillDTO;
-import com.lspeixotodev.family_activity_control_api.service.BillService;
+
+import com.lspeixotodev.family_activity_control_api.service.impl.BillServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 
 import java.util.List;
 
@@ -18,37 +20,35 @@ import java.util.List;
 public class BillControllerImpl implements BillController {
 
     @Autowired
-    private BillService billService;
+    private BillServiceImpl billService;
 
     @Override
-    public ResponseEntity<CreateBillDTO> create(CreateBillDTO createBillDTO) {
-
+    public ResponseEntity<BillDTO> create(CreateBillDTO createBillDTO) {
         return new ResponseEntity<>(this.billService.createBill(createBillDTO), HttpStatus.CREATED);
-
     }
 
     @Override
-    public ResponseEntity<List<CreateBillDTO>> getAllBills() throws Exception {
-        return ResponseEntity.ok(this.billService.getAllBills());
+    public ResponseEntity<List<BillDTO>> getAllBills() {
+        return new ResponseEntity<>(this.billService.getAllBills(), HttpStatus.OK);
     }
 
     @Override
-    public ResponseEntity<CreateBillDTO> findBillById(String id) {
-        return ResponseEntity.ok(this.billService.findBillById(id));
-    }
-
-    @Override
-    public ResponseEntity<UpdateBillDTO> updateBill(UpdateBillDTO updateBillDTO, String id) {
-        return ResponseEntity.ok(this.billService.updateBill(updateBillDTO, id));
-    }
-
-    @Override
-    public ResponseEntity<CreateBillDTO> deleteBill(String id) {
-        return ResponseEntity.ok(this.billService.deleteBill(id));
+    public ResponseEntity<BillDTO> findBillById(String id) {
+        return new ResponseEntity<>(this.billService.findBillById(id), HttpStatus.OK);
     }
 
     @Override
     public ResponseEntity<BillDTO> findBillByTitle(String title) {
-        return ResponseEntity.ok(this.billService.findBillByTitle(title));
+        return new ResponseEntity<>(this.billService.findBillByTitle(title), HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<BillDTO> updateBill(UpdateBillDTO updateBillDTO, String id) {
+        return new ResponseEntity<>(this.billService.updateBill(updateBillDTO, id), HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<BillDTO> deleteBill(String id) {
+        return new ResponseEntity<>(this.billService.deleteBill(id), HttpStatus.OK);
     }
 }

@@ -8,15 +8,15 @@ import java.util.List;
 
 public interface BillService {
 
-    CreateBillDTO createBill(CreateBillDTO bill);
+    BillDTO createBill(CreateBillDTO bill);
 
-    List<CreateBillDTO> getAllBills();
+    List<BillDTO> getAllBills();
 
-    CreateBillDTO findBillById(String id);
+    BillDTO findBillById(String id);
 
-    UpdateBillDTO updateBill(UpdateBillDTO CreateBillDTO, String id);
+    BillDTO updateBill(UpdateBillDTO CreateBillDTO, String id);
 
-    CreateBillDTO deleteBill(String id);
+    BillDTO deleteBill(String id);
 
     BillDTO findBillByTitle(String name);
 }

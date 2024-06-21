@@ -20,6 +20,7 @@ import java.util.List;
 @Tag(name = "Bill", description = "Endpoints for management The Bills")
 public interface BillController {
 
+
     @PostMapping(
             value = "/create",
             consumes = {MediaType.APPLICATION_JSON},
@@ -56,7 +57,7 @@ public interface BillController {
                     )
             }
     )
-    ResponseEntity<CreateBillDTO> create(@RequestBody @Valid CreateBillDTO CreateBillDTO);
+    ResponseEntity<BillDTO> create(@RequestBody @Valid CreateBillDTO CreateBillDTO);
 
     @GetMapping(produces = {MediaType.APPLICATION_JSON})
     @Operation(
@@ -97,7 +98,7 @@ public interface BillController {
                     )
             }
     )
-    ResponseEntity<List<CreateBillDTO>> getAllBills() throws Exception;
+    ResponseEntity<List<BillDTO>> getAllBills() throws Exception;
 
     @GetMapping(
             value = "/find-by-id/{id}",
@@ -141,7 +142,7 @@ public interface BillController {
                     )
             }
     )
-    ResponseEntity<CreateBillDTO> findBillById(@PathVariable String id);
+    ResponseEntity<BillDTO> findBillById(@PathVariable String id);
 
     @PutMapping(
             value = "/update/{id}",
@@ -185,7 +186,7 @@ public interface BillController {
                     )
             }
     )
-    ResponseEntity<UpdateBillDTO> updateBill(@RequestBody @Valid UpdateBillDTO CreateBillDTO, @PathVariable String id);
+    ResponseEntity<BillDTO> updateBill(@RequestBody @Valid UpdateBillDTO CreateBillDTO, @PathVariable String id);
 
     @DeleteMapping(
             value = "/delete/{id}",
@@ -229,7 +230,7 @@ public interface BillController {
                     )
             }
     )
-    ResponseEntity<CreateBillDTO> deleteBill(@PathVariable String id);
+    ResponseEntity<BillDTO> deleteBill(@PathVariable String id);
 
     @GetMapping(
             value = "/find-by-title/{title}",

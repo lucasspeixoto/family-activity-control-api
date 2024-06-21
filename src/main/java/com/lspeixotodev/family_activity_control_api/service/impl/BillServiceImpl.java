@@ -25,42 +25,42 @@ public class BillServiceImpl implements BillService {
     private BillMapper billMapper;
 
     @Override
-    public CreateBillDTO createBill(CreateBillDTO CreateBillDTO) {
+    public BillDTO createBill(CreateBillDTO CreateBillDTO) {
 
         Bill bill = this.billMapper.createBillDtoToEntity(CreateBillDTO);
 
         Bill savedBill = billRepository.save(bill);
 
-        return this.billMapper.entityToCreateBillDTO(savedBill);
+        return this.billMapper.toDTO(savedBill);
     }
 
     @Override
-    public List<CreateBillDTO> getAllBills() {
+    public List<BillDTO> getAllBills() {
         List<Bill> bills = billRepository.findAll();
 
-        return this.billMapper.entitiesToCreateBillDtos(bills);
+        return this.billMapper.entitiesToBillDtos(bills);
     }
 
     @Override
-    public CreateBillDTO findBillById(String id) {
+    public BillDTO findBillById(String id) {
         UUID uuid = UUID.fromString(id);
 
         Bill entity = billRepository
                 .findById(uuid)
                 .orElseThrow(
-                        () -> new ResourceNotFoundException("Conta", "id", id)
+                        () -> new ResourceNotFoundException("Bill", "id", id)
                 );
 
-        return this.billMapper.entityToCreateBillDTO(entity);
+        return this.billMapper.toDTO(entity);
     }
 
     @Override
-    public UpdateBillDTO updateBill(UpdateBillDTO updateBillDTO, String id) {
+    public BillDTO updateBill(UpdateBillDTO updateBillDTO, String id) {
 
         Optional<Bill> optionalBill = billRepository.findById(UUID.fromString(id));
 
         if (optionalBill.isEmpty()) {
-            throw new ResourceNotFoundException("Conta", "id", id);
+            throw new ResourceNotFoundException("Bill", "id", id);
         }
 
         Bill existingBill = optionalBill.get();
@@ -69,7 +69,7 @@ public class BillServiceImpl implements BillService {
 
         Bill updatedBill = billRepository.save(changedBill);
 
-        return this.billMapper.entityToUpdateBillDTO(updatedBill);
+        return this.billMapper.toDTO(updatedBill);
     }
 
     private static Bill setBillFieldsHandler(UpdateBillDTO updateBillDTO, Bill existingBill) {
@@ -85,18 +85,18 @@ public class BillServiceImpl implements BillService {
     }
 
     @Override
-    public CreateBillDTO deleteBill(String id) {
+    public BillDTO deleteBill(String id) {
         Optional<Bill> optionalBill = billRepository.findById(UUID.fromString(id));
 
         if (optionalBill.isEmpty()) {
-            throw new ResourceNotFoundException("Conta", "id", id);
+            throw new ResourceNotFoundException("Bill", "id", id);
         }
 
         Bill existingBill = optionalBill.get();
 
         billRepository.deleteById(existingBill.getId());
 
-        return this.billMapper.entityToCreateBillDTO(existingBill);
+        return this.billMapper.toDTO(existingBill);
     }
 
     @Override

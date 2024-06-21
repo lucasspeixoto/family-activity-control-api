@@ -9,6 +9,7 @@ import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import java.text.ParseException;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,7 +32,7 @@ public class BillRepositoryTests {
     public MockBill mockBill;
 
     @BeforeEach
-    public void config() {
+    public void config() throws ParseException {
         this.bill = mockBill.getBill();
         this.secondBill = mockBill.getSecondBill();
     }
@@ -44,7 +45,13 @@ public class BillRepositoryTests {
         Bill savedBill = billRepository.save(this.bill);
 
         assertThat(savedBill).isNotNull();
-        assertThat(savedBill).isEqualTo(this.bill);
+        assertThat(savedBill.getTitle()).isEqualTo(this.bill.getTitle());
+        assertThat(savedBill.getOwner()).isEqualTo(this.bill.getOwner());
+        assertThat(savedBill.getDescription()).isEqualTo(this.bill.getDescription());
+        assertThat(savedBill.getFinishAt().getTime()).isEqualTo(this.bill.getFinishAt().getTime());
+        assertThat(savedBill.getAmount()).isEqualTo(this.bill.getAmount());
+        assertThat(savedBill.getType()).isEqualTo(this.bill.getType());
+        assertThat(savedBill.getCategory()).isEqualTo(this.bill.getCategory());
     }
 
     @Test
