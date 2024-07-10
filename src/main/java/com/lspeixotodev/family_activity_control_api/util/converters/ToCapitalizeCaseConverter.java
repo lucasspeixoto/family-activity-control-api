@@ -11,7 +11,8 @@ public class ToCapitalizeCaseConverter extends StdConverter<String, String> {
     public String convert(String value) {
         Stream<String> words = Arrays.stream(value.split(" "));
 
-        Stream<String> capitalizedWords = words.map(word -> word.substring(0, 1).toUpperCase() + word.substring(1).toLowerCase());
+        Stream<String> capitalizedWords = words.map(word -> word.substring(0, 1)
+                .toUpperCase() + word.substring(1).toLowerCase());
 
         return capitalizedWords.collect(Collectors.joining(" "));
     }

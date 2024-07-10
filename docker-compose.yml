@@ -1,0 +1,44 @@
+version: '3.9'
+
+services:
+  db:
+    image: postgres:latest
+    restart: unless-stopped
+    container_name: family-activity-control-db
+    hostname: db-postgresql
+    env_file: ./.env
+    environment:
+      - POSTGRES_USER=$POSTGRESDB_USER
+      - POSTGRES_PASSWORD=$POSTGRESDB_ROOT_PASSWORD
+      - POSTGRES_DB=$POSTGRESDB_DATABASE
+    ports:
+      - $POSTGRESDB_LOCAL_PORT:$POSTGRESDB_DOCKER_PORT
+    networks:
+      - family-activity-control-network
+  family-activity-control-api:
+    image: lspeixotodev/family-activity-control-api
+    restart: on-failure
+    container_name: family-activity-control-api
+    depends_on:
+      - db
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    working_dir: /
+    environment:
+      TZ: America/Sao_Paulo
+      SPRING.DATASOURCE.URL: jdbc:postgresql://db:5432/family-activity-control?useTimezone=true&serverTimezone=America/Sao_Paulo
+      SPRING.DATASOURCE.USERNAME: $POSTGRESDB_USER
+      SPRING.DATASOURCE.PASSWORD: $POSTGRESDB_ROOT_PASSWORD
+    ports:
+      - $SPRING_LOCAL_PORT:$SPRING_LOCAL_PORT
+    command: mvn spring-boot:run
+    volumes:
+      - .m2:/root/.m2
+    stdin_open: true
+    tty: true
+    networks:
+      - family-activity-control-network
+networks:
+  family-activity-control-network:
+    driver: bridge

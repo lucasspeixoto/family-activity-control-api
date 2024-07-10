@@ -7,9 +7,9 @@ cors:
   exposed-headers: "X-Get-Header"
 spring:
   datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/family-activity-control?useTimezone=true&serverTimezone=America/Sao_Paulo
-    username: root
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/family-activity-control?useTimezone=true&serverTimezone=America/Sao_Paulo
+    username: postgres
     password: lucasadmin3010
   jpa:
     generate-ddl: true
@@ -17,7 +17,7 @@ spring:
       ddl-auto: none
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.MySQLDialect
+        dialect: org.hibernate.dialect.PostgreSQLDialect
     show-sql: false
   flyway:
     enabled: true
