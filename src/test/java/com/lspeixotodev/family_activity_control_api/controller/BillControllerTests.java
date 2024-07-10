@@ -261,7 +261,7 @@ public class BillControllerTests {
     public void billController_WhenFindBillByTitleThatExists_ThenReturnBillDTO() throws Exception {
         String requiredTitleSearch = "Energia";
 
-        when(billService.findBillByTitle(requiredTitleSearch)).thenReturn(this.billDTO);
+        when(billService.findBillByTitle(requiredTitleSearch)).thenReturn(Collections.singletonList(this.billDTO));
 
         mvc.perform(get("/api/v1/bill/find-by-title/{title}", requiredTitleSearch)
                         .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk())

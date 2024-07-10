@@ -18,5 +18,5 @@ public interface BillService {
 
     BillDTO deleteBill(String id);
 
-    BillDTO findBillByTitle(String name);
+    List<BillDTO> findBillByTitle(String name);
 }

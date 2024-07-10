@@ -8,15 +8,21 @@ import com.lspeixotodev.family_activity_control_api.infra.exceptions.ResourceNot
 import com.lspeixotodev.family_activity_control_api.mapper.BillMapper;
 import com.lspeixotodev.family_activity_control_api.repository.BillRepository;
 import com.lspeixotodev.family_activity_control_api.service.BillService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 @Service
 public class BillServiceImpl implements BillService {
+
+    private static final Logger logger = LoggerFactory.getLogger(BillServiceImpl.class);
 
     @Autowired
     private BillRepository billRepository;
@@ -26,6 +32,7 @@ public class BillServiceImpl implements BillService {
 
     @Override
     public BillDTO createBill(CreateBillDTO CreateBillDTO) {
+        logger.info("Start creating bill at: {}", LocalDateTime.now());
 
         Bill bill = this.billMapper.createBillDtoToEntity(CreateBillDTO);
 
@@ -43,23 +50,28 @@ public class BillServiceImpl implements BillService {
 
     @Override
     public BillDTO findBillById(String id) {
+        logger.info("Start finding bill by id at: {}", LocalDateTime.now());
+
         UUID uuid = UUID.fromString(id);
 
-        Bill entity = billRepository
-                .findById(uuid)
-                .orElseThrow(
-                        () -> new ResourceNotFoundException("Bill", "id", id)
-                );
+        Optional<Bill> entity = billRepository.findById(uuid);
 
-        return this.billMapper.toDTO(entity);
+        if (entity.isEmpty()) {
+            logger.info("Fail to find a bill with id {}", id);
+            throw new ResourceNotFoundException("Bill", "id", id);
+        }
+
+        return this.billMapper.toDTO(entity.get());
     }
 
     @Override
     public BillDTO updateBill(UpdateBillDTO updateBillDTO, String id) {
+        logger.info("Start update a bill at: {}", LocalDateTime.now());
 
         Optional<Bill> optionalBill = billRepository.findById(UUID.fromString(id));
 
         if (optionalBill.isEmpty()) {
+            logger.info("Fail to update a bill with id {}", id);
             throw new ResourceNotFoundException("Bill", "id", id);
         }
 
@@ -86,9 +98,12 @@ public class BillServiceImpl implements BillService {
 
     @Override
     public BillDTO deleteBill(String id) {
+        logger.info("Start delete a bill at: {}", LocalDateTime.now());
+
         Optional<Bill> optionalBill = billRepository.findById(UUID.fromString(id));
 
         if (optionalBill.isEmpty()) {
+            logger.info("Fail to delete a bill with id {}", id);
             throw new ResourceNotFoundException("Bill", "id", id);
         }
 
@@ -100,14 +115,15 @@ public class BillServiceImpl implements BillService {
     }
 
     @Override
-    public BillDTO findBillByTitle(String title) {
+    public List<BillDTO> findBillByTitle(String title) {
+        logger.info("Start find a bill by title at: {}", LocalDateTime.now());
+        List<Bill> bills = billRepository.findByTitleContainingIgnoreCase(title);
 
-        Optional<Bill> optionalBill = billRepository.findByTitleContainingIgnoreCase(title);
-
-        if (optionalBill.isEmpty()) {
+        if (bills.isEmpty()) {
+            logger.info("Fail to find a bill by title with '{}' title", title);
             throw new ResourceNotFoundException("Bill", "title", title);
         }
 
-        return this.billMapper.toDTO(optionalBill.get());
+        return this.billMapper.entitiesToBillDtos(bills);
     }
 }

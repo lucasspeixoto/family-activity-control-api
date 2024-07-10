@@ -274,5 +274,5 @@ public interface BillController {
                     )
             }
     )
-    ResponseEntity<BillDTO> findBillByTitle(@PathVariable String title);
+    ResponseEntity<List<BillDTO>> findBillByTitle(@PathVariable String title);
 }

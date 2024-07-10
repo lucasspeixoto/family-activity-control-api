@@ -130,8 +130,8 @@ public class BillRepositoryTests {
 
         billRepository.save(this.bill);
 
-        Optional<Bill> optionalBill = billRepository.findByTitleContainingIgnoreCase(this.bill.getTitle());
+        List<Bill> optionalBill = billRepository.findByTitleContainingIgnoreCase(this.bill.getTitle());
 
-        assertThat(optionalBill).isPresent();
+        assertThat(optionalBill.size()).isGreaterThan(0);
     }
 }

@@ -38,7 +38,7 @@ public class BillControllerImpl implements BillController {
     }
 
     @Override
-    public ResponseEntity<BillDTO> findBillByTitle(String title) {
+    public ResponseEntity<List<BillDTO>> findBillByTitle(String title) {
         return new ResponseEntity<>(this.billService.findBillByTitle(title), HttpStatus.OK);
     }
 

@@ -74,6 +74,19 @@ public class Bill {
         this.type = type;
     }
 
+    private Bill(Bill bill) {
+        this.id = bill.id;
+        this.title = bill.title;
+        this.owner = bill.owner;
+        this.amount = bill.amount;
+        this.category = bill.category;
+        this.description = bill.description;
+        this.finishAt = bill.finishAt;
+        this.createdAt = bill.createdAt;
+        this.updatedAt = bill.updatedAt;
+        this.type = bill.type;
+    }
+
     public UUID getId() {
         return id;
     }
@@ -113,8 +126,6 @@ public class Bill {
     public void setOwner(String owner) {
         this.owner = owner;
     }
-
-
 
     public String getCategory() {
         return category;
@@ -167,5 +178,21 @@ public class Bill {
     @Override
     public int hashCode() {
         return Objects.hashCode(id);
+    }
+
+    @Override
+    public String toString() {
+        return "Bill {" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", owner='" + owner + '\'' +
+                ", amount=" + amount +
+                ", category='" + category + '\'' +
+                ", description='" + description + '\'' +
+                ", finishAt=" + finishAt +
+                ", type=" + type +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                '}';
     }
 }
