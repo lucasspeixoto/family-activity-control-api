@@ -3,7 +3,7 @@ package com.lspeixotodev.family_activity_control_api.dto.bill;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.lspeixotodev.family_activity_control_api.entity.bill.BillType;
-import com.lspeixotodev.family_activity_control_api.infra.validators.UniqueBillTitle;
+import com.lspeixotodev.family_activity_control_api.infra.validators.bill.UniqueBillTitle;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
