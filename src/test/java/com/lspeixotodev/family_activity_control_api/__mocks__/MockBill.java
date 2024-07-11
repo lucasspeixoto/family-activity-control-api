@@ -1,19 +1,14 @@
 package com.lspeixotodev.family_activity_control_api.__mocks__;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lspeixotodev.family_activity_control_api.dto.bill.BillDTO;
 import com.lspeixotodev.family_activity_control_api.dto.bill.CreateBillDTO;
 import com.lspeixotodev.family_activity_control_api.dto.bill.UpdateBillDTO;
 import com.lspeixotodev.family_activity_control_api.entity.bill.Bill;
 import com.lspeixotodev.family_activity_control_api.entity.bill.BillType;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.util.Date;
 import java.util.UUID;
 
 public class MockBill {

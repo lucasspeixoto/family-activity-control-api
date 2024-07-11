@@ -8,13 +8,13 @@ import java.util.List;
 
 public interface BillService {
 
-    BillDTO createBill(CreateBillDTO bill);
+    BillDTO createBill(CreateBillDTO createBillDTO);
 
     List<BillDTO> getAllBills();
 
     BillDTO findBillById(String id);
 
-    BillDTO updateBill(UpdateBillDTO CreateBillDTO, String id);
+    BillDTO updateBill(UpdateBillDTO updateBillDTO, String id);
 
     BillDTO deleteBill(String id);
 

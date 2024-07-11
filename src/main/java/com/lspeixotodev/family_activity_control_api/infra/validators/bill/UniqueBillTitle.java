@@ -1,4 +1,4 @@
-package com.lspeixotodev.family_activity_control_api.infra.validators;
+package com.lspeixotodev.family_activity_control_api.infra.validators.bill;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
