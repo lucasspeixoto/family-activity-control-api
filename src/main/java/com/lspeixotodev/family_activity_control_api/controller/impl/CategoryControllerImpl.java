@@ -2,7 +2,9 @@ package com.lspeixotodev.family_activity_control_api.controller.impl;
 
 import com.lspeixotodev.family_activity_control_api.controller.CategoryController;
 import com.lspeixotodev.family_activity_control_api.dto.category.CategoryDTO;
+import com.lspeixotodev.family_activity_control_api.dto.category.CreateCategoryDTO;
 import com.lspeixotodev.family_activity_control_api.dto.category.CategoryUsageDTO;
+import com.lspeixotodev.family_activity_control_api.dto.category.UpdateCategoryDTO;
 import com.lspeixotodev.family_activity_control_api.service.impl.CategoryServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,8 +22,8 @@ public class CategoryControllerImpl implements CategoryController {
     private CategoryServiceImpl categoryService;
 
     @Override
-    public ResponseEntity<CategoryDTO> create(CategoryDTO categoryDTO) {
-        return new ResponseEntity<>(this.categoryService.create(categoryDTO), HttpStatus.CREATED);
+    public ResponseEntity<CategoryDTO> create(CreateCategoryDTO createCategoryDTO) {
+        return new ResponseEntity<>(this.categoryService.create(createCategoryDTO), HttpStatus.CREATED);
     }
 
     @Override
@@ -41,8 +43,8 @@ public class CategoryControllerImpl implements CategoryController {
     }
 
     @Override
-    public ResponseEntity<CategoryDTO> updateCategory(CategoryDTO categoryDTO, String id) {
-        return new ResponseEntity<>(this.categoryService.updateCategory(categoryDTO, id), HttpStatus.OK);
+    public ResponseEntity<CategoryDTO> updateCategory(UpdateCategoryDTO updateCategoryDTO, String id) {
+        return new ResponseEntity<>(this.categoryService.updateCategory(updateCategoryDTO, id), HttpStatus.OK);
     }
 
     @Override

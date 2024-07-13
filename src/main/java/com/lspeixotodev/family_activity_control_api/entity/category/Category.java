@@ -16,8 +16,10 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
+    @Column(nullable = false, unique = true, length = 50)
     private String title;
 
+    @Column(nullable = false, length = 100)
     private String description;
 
     @Column(name = "created_at", nullable = false, updatable = false)

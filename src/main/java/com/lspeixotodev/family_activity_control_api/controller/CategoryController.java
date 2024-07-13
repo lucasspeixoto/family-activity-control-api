@@ -1,10 +1,10 @@
 package com.lspeixotodev.family_activity_control_api.controller;
 
-import com.lspeixotodev.family_activity_control_api.dto.bill.BillDTO;
 import com.lspeixotodev.family_activity_control_api.dto.bill.CreateBillDTO;
-import com.lspeixotodev.family_activity_control_api.dto.bill.UpdateBillDTO;
 import com.lspeixotodev.family_activity_control_api.dto.category.CategoryDTO;
+import com.lspeixotodev.family_activity_control_api.dto.category.CreateCategoryDTO;
 import com.lspeixotodev.family_activity_control_api.dto.category.CategoryUsageDTO;
+import com.lspeixotodev.family_activity_control_api.dto.category.UpdateCategoryDTO;
 import com.lspeixotodev.family_activity_control_api.util.constants.MediaType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -34,7 +34,7 @@ public interface CategoryController {
                     @ApiResponse(
                             description = "Success",
                             responseCode = "200",
-                            content = @Content(schema = @Schema(implementation = CategoryDTO.class))
+                            content = @Content(schema = @Schema(implementation = CreateCategoryDTO.class))
                     ),
                     @ApiResponse(
                             description = "Bad Request",
@@ -58,7 +58,7 @@ public interface CategoryController {
                     )
             }
     )
-    ResponseEntity<CategoryDTO> create(@RequestBody @Valid CategoryDTO categoryDTO);
+    ResponseEntity<CategoryDTO> create(@RequestBody @Valid CreateCategoryDTO createCategoryDTO);
 
     @GetMapping(produces = {MediaType.APPLICATION_JSON})
     @Operation(
@@ -73,7 +73,7 @@ public interface CategoryController {
                                     @Content(
                                             mediaType = "application/json",
                                             array = @ArraySchema(
-                                                    schema = @Schema(implementation = CategoryDTO.class))
+                                                    schema = @Schema(implementation = CreateCategoryDTO.class))
                                     )
                             }
                     ),
@@ -158,7 +158,7 @@ public interface CategoryController {
                                     @Content(
                                             mediaType = "application/json",
                                             array = @ArraySchema(
-                                                    schema = @Schema(implementation = CategoryDTO.class))
+                                                    schema = @Schema(implementation = CreateCategoryDTO.class))
                                     )
                             }
                     ),
@@ -202,7 +202,7 @@ public interface CategoryController {
                                     @Content(
                                             mediaType = "application/json",
                                             array = @ArraySchema(
-                                                    schema = @Schema(implementation = CategoryDTO.class))
+                                                    schema = @Schema(implementation = CreateCategoryDTO.class))
                                     )
                             }
                     ),
@@ -228,7 +228,7 @@ public interface CategoryController {
                     )
             }
     )
-    ResponseEntity<CategoryDTO> updateCategory(@RequestBody @Valid CategoryDTO categoryDTO, @PathVariable String id);
+    ResponseEntity<CategoryDTO> updateCategory(@RequestBody @Valid UpdateCategoryDTO updateCategoryDTO, @PathVariable String id);
 
     @DeleteMapping(
             value = "/delete/{id}",

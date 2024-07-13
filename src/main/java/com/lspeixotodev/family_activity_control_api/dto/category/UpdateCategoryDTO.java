@@ -2,17 +2,23 @@ package com.lspeixotodev.family_activity_control_api.dto.category;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
 
 import java.util.Date;
 import java.util.Objects;
 
 
-public class CategoryDTO {
+public class UpdateCategoryDTO {
 
     private String id;
 
+    @NotEmpty(message = "The title is mandatory!")
+    @Size(min = 3, message = "The title must contain at least 3 characters!")
     private String title;
 
+    @NotEmpty(message = "The description is mandatory!")
+    @Size(min = 3, message = "The description must contain at least 3 characters!")
     private String description;
 
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "America/Sao_Paulo")
@@ -23,17 +29,17 @@ public class CategoryDTO {
     @JsonIgnore
     private Date updatedAt;
 
-    public CategoryDTO() {
+    public UpdateCategoryDTO() {
     }
 
-    public CategoryDTO(String title, String description, Date createdAt, Date updatedAt) {
+    public UpdateCategoryDTO(String title, String description, Date createdAt, Date updatedAt) {
         this.title = title;
         this.description = description;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
 
-    public CategoryDTO(String id, String title, String description, Date createdAt, Date updatedAt) {
+    public UpdateCategoryDTO(String id, String title, String description, Date createdAt, Date updatedAt) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -85,7 +91,7 @@ public class CategoryDTO {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        CategoryDTO that = (CategoryDTO) o;
+        UpdateCategoryDTO that = (UpdateCategoryDTO) o;
         return Objects.equals(id, that.id);
     }
 

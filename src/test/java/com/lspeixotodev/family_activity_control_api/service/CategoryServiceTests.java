@@ -2,9 +2,9 @@ package com.lspeixotodev.family_activity_control_api.service;
 
 import com.lspeixotodev.family_activity_control_api.__mocks__.MockCategory;
 import com.lspeixotodev.family_activity_control_api.dto.category.CategoryDTO;
-import com.lspeixotodev.family_activity_control_api.dto.category.CategoryDTO;
+import com.lspeixotodev.family_activity_control_api.dto.category.CreateCategoryDTO;
 import com.lspeixotodev.family_activity_control_api.dto.category.CategoryUsageDTO;
-import com.lspeixotodev.family_activity_control_api.entity.category.Category;
+import com.lspeixotodev.family_activity_control_api.dto.category.UpdateCategoryDTO;
 import com.lspeixotodev.family_activity_control_api.entity.category.Category;
 import com.lspeixotodev.family_activity_control_api.infra.exceptions.ResourceNotFoundException;
 
@@ -47,6 +47,10 @@ public class CategoryServiceTests {
 
     private CategoryDTO categoryDTO;
 
+    private CreateCategoryDTO createCategoryDTO;
+
+    private UpdateCategoryDTO updateCategoryDTO;
+
     private CategoryUsageDTO categoryUsageDTO;
 
     @InjectMocks
@@ -57,6 +61,8 @@ public class CategoryServiceTests {
     public void config() throws ParseException {
         this.category = mockCategory.getCategory();
         this.categoryDTO = mockCategory.getCategoryDTO();
+        this.createCategoryDTO = mockCategory.getCreateCategoryDTO();
+        this.updateCategoryDTO = mockCategory.getUpdateCategoryDTO();
         this.categoryUsageDTO = mockCategory.getCategoryUsageDTO();
     }
 
@@ -66,13 +72,13 @@ public class CategoryServiceTests {
     public void categoryService_WhenCreateACategory_ThenReturnCreateCategoryDto() {
         when(categoryRepository.save(any(Category.class))).thenReturn(this.category);
 
-        CategoryDTO mappedCategoryDTOFromCategory = this.categoryMapper.toDTO(this.category);
+        CreateCategoryDTO mappedCategoryDTOFromCreateCategory = this.categoryMapper.entityToCreateDTO(this.category);
 
-        CategoryDTO categoryDTO = this.categoryService.create(this.categoryDTO);
+        CategoryDTO categoryDTO = this.categoryService.create(this.createCategoryDTO);
 
         assertThat(categoryDTO).isNotNull();
-        assertThat(categoryDTO.getTitle()).isEqualTo(mappedCategoryDTOFromCategory.getTitle());
-        assertThat(categoryDTO.getDescription()).isEqualTo(mappedCategoryDTOFromCategory.getDescription());
+        assertThat(categoryDTO.getTitle()).isEqualTo(mappedCategoryDTOFromCreateCategory.getTitle());
+        assertThat(categoryDTO.getDescription()).isEqualTo(mappedCategoryDTOFromCreateCategory.getDescription());
 
     }
 
@@ -100,7 +106,7 @@ public class CategoryServiceTests {
 
         CategoryDTO categoryDTO = this.categoryService.findCategoryById(this.category.getId().toString());
 
-        CategoryDTO mappedCategoryDTO = this.categoryMapper.toDTO(this.category);
+        CategoryDTO mappedCategoryDTO = this.categoryMapper.entityToDTO(this.category);
 
         assertThat(categoryDTO).isNotNull();
         assertThat(categoryDTO).isEqualTo(mappedCategoryDTO);
@@ -122,18 +128,18 @@ public class CategoryServiceTests {
         String newTitle = "New Title";
         this.category.setTitle(newTitle);
 
-        CategoryDTO categoryDTO = this.categoryMapper.toDTO(this.category);
+        UpdateCategoryDTO createCategoryDTO = this.categoryMapper.entityToUpdateDTO(this.category);
 
         when(categoryRepository.findById(any())).thenReturn((Optional.of(this.category)));
         when(categoryRepository.save(any(Category.class))).thenReturn(this.category);
 
-        CategoryDTO updatedCategory = this.categoryService.updateCategory(categoryDTO, this.category.getId().toString());
+        CategoryDTO updatedCategory = this.categoryService.updateCategory(createCategoryDTO, this.category.getId().toString());
 
-        CategoryDTO mappedCategoryDTO = this.categoryMapper.toDTO(this.category);
+        CategoryDTO mappedCreateCategoryDTO = this.categoryMapper.entityToDTO(this.category);
 
         assertThat(updatedCategory).isNotNull();
-        assertThat(updatedCategory.getTitle()).isEqualTo(mappedCategoryDTO.getTitle());
-        assertThat(updatedCategory.getDescription()).isEqualTo(mappedCategoryDTO.getDescription());
+        assertThat(updatedCategory.getTitle()).isEqualTo(mappedCreateCategoryDTO.getTitle());
+        assertThat(updatedCategory.getDescription()).isEqualTo(mappedCreateCategoryDTO.getDescription());
     }
 
     @Test
@@ -142,21 +148,21 @@ public class CategoryServiceTests {
     public void categoryService_WhenUpdateCategory_ThenThrowsResourceNotFoundException() {
         when(categoryRepository.findById(any())).thenReturn((Optional.empty()));
 
-        assertThrows(ResourceNotFoundException.class, () -> this.categoryService.updateCategory(this.categoryDTO, this.category.getId().toString()));
+        assertThrows(ResourceNotFoundException.class, () -> this.categoryService.updateCategory(this.updateCategoryDTO, this.category.getId().toString()));
     }
 
     @Test
     @Order(7)
     @DisplayName("Category Service: When Delete Category then return CategoryDTO")
     public void categoryService_WhenDeleteCategory_ThenReturnsCategoryDTO() {
-        CategoryDTO categoryDTO = this.categoryMapper.toDTO(this.category);
 
         when(categoryRepository.findById(any())).thenReturn((Optional.of(this.category)));
 
         CategoryDTO deletedCategory = this.categoryService.deleteCategory(this.category.getId().toString());
 
         assertThat(deletedCategory).isNotNull();
-        assertThat(deletedCategory).isEqualTo(categoryDTO);
+        assertThat(deletedCategory.getTitle()).isEqualTo(this.categoryDTO.getTitle());
+        assertThat(deletedCategory.getDescription()).isEqualTo(this.categoryDTO.getDescription());
     }
 
     @Test
@@ -175,7 +181,7 @@ public class CategoryServiceTests {
         List<Category> categoryUsages = Collections.singletonList(this.category);
         when(categoryRepository.findAllByOrderByTitleAsc()).thenReturn(categoryUsages);
 
-        List<CategoryUsageDTO> mappedCategoryUsagesDTO = this.categoryMapper.dtosToUsages(categoryUsages);
+        List<CategoryUsageDTO> mappedCategoryUsagesDTO = this.categoryMapper.entitiesToCategoryUsages(categoryUsages);
 
         List<CategoryUsageDTO> categoryUsagesDDTO = this.categoryService.getCategoryUsages();
 

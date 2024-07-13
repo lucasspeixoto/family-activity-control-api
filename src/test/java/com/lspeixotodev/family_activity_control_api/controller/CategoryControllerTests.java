@@ -2,16 +2,14 @@ package com.lspeixotodev.family_activity_control_api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lspeixotodev.family_activity_control_api.__mocks__.MockCategory;
-import com.lspeixotodev.family_activity_control_api.__mocks__.MockCategory;
-import com.lspeixotodev.family_activity_control_api.controller.impl.CategoryControllerImpl;
 import com.lspeixotodev.family_activity_control_api.controller.impl.CategoryControllerImpl;
 import com.lspeixotodev.family_activity_control_api.dto.category.CategoryDTO;
+import com.lspeixotodev.family_activity_control_api.dto.category.CreateCategoryDTO;
 import com.lspeixotodev.family_activity_control_api.dto.category.CategoryUsageDTO;
+import com.lspeixotodev.family_activity_control_api.dto.category.UpdateCategoryDTO;
 import com.lspeixotodev.family_activity_control_api.entity.category.Category;
 import com.lspeixotodev.family_activity_control_api.infra.exceptions.ResourceNotFoundException;
 import com.lspeixotodev.family_activity_control_api.repository.CategoryRepository;
-import com.lspeixotodev.family_activity_control_api.repository.CategoryRepository;
-import com.lspeixotodev.family_activity_control_api.service.impl.CategoryServiceImpl;
 import com.lspeixotodev.family_activity_control_api.service.impl.CategoryServiceImpl;
 import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.*;
@@ -58,6 +56,10 @@ public class CategoryControllerTests {
 
     private CategoryDTO categoryDTO;
 
+    private CreateCategoryDTO createCategoryDTO;
+
+    private UpdateCategoryDTO updateCategoryDTO;
+
     private CategoryUsageDTO categoryUsageDTO;
 
     @InjectMocks
@@ -68,6 +70,8 @@ public class CategoryControllerTests {
     public void config() throws ParseException {
         this.category = mockCategory.getCategory();
         this.categoryDTO = mockCategory.getCategoryDTO();
+        this.createCategoryDTO = mockCategory.getCreateCategoryDTO();
+        this.updateCategoryDTO = mockCategory.getUpdateCategoryDTO();
         this.categoryUsageDTO = mockCategory.getCategoryUsageDTO();
     }
 
@@ -75,10 +79,10 @@ public class CategoryControllerTests {
     @Order(1)
     @DisplayName("Category Controller: Create Category With Valid Data Then returns created")
     public void categoryController_CreateCategoryWithValidData_ThenReturnsCreated() throws Exception {
-        when(categoryService.create(any(CategoryDTO.class))).thenReturn(this.categoryDTO);
+        when(categoryService.create(any(CreateCategoryDTO.class))).thenReturn(this.categoryDTO);
 
         ResultActions response = mvc.perform(post("/api/v1/category/create")
-                .content(objectMapper.writeValueAsString(this.categoryDTO))
+                .content(objectMapper.writeValueAsString(this.createCategoryDTO))
                 .contentType(MediaType.APPLICATION_JSON));
 
         response.andExpect(status().isCreated())
@@ -92,21 +96,21 @@ public class CategoryControllerTests {
     @Order(2)
     @DisplayName("Category Controller: Create Category With Invalid Title Then Throws UnprocessableEntity")
     public void categoryController_CreateCategoryWithInvalidTitle_ThenThrowsUnprocessableEntity() throws Exception {
-        when(categoryService.create(any(CategoryDTO.class))).thenReturn(this.categoryDTO);
+        when(categoryService.create(any(CreateCategoryDTO.class))).thenReturn(this.categoryDTO);
 
-        this.categoryDTO.setTitle("ti");
+        this.createCategoryDTO.setTitle("ti");
 
         mvc.perform(post("/api/v1/category/create")
-                        .content(objectMapper.writeValueAsString(this.categoryDTO))
+                        .content(objectMapper.writeValueAsString(this.createCategoryDTO))
                         .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isUnprocessableEntity())
                 .andExpect(jsonPath("$.message", CoreMatchers.is("The title must contain at least 3 characters!")))
                 .andDo(MockMvcResultHandlers.print());
 
 
-        this.categoryDTO.setTitle(null);
+        this.createCategoryDTO.setTitle(null);
 
         mvc.perform(post("/api/v1/category/create")
-                        .content(objectMapper.writeValueAsString(this.categoryDTO))
+                        .content(objectMapper.writeValueAsString(this.createCategoryDTO))
                         .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isUnprocessableEntity())
                 .andExpect(jsonPath("$.message", CoreMatchers.is("The title is mandatory!")))
                 .andDo(MockMvcResultHandlers.print());
@@ -116,22 +120,22 @@ public class CategoryControllerTests {
     @Order(3)
     @DisplayName("Category Controller: Create Category With Invalid Description Then Throws UnprocessableEntity")
     public void categoryController_CreateCategoryWithInvalidDescription_ThenThrowsUnprocessableEntity() throws Exception {
-        when(categoryService.create(any(CategoryDTO.class))).thenReturn(this.categoryDTO);
+        when(categoryService.create(any(CreateCategoryDTO.class))).thenReturn(this.categoryDTO);
 
-        this.categoryDTO.setDescription("ti");
+        this.createCategoryDTO.setDescription("ti");
 
         mvc.perform(post("/api/v1/category/create")
-                        .content(objectMapper.writeValueAsString(this.categoryDTO))
+                        .content(objectMapper.writeValueAsString(this.createCategoryDTO))
                         .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isUnprocessableEntity())
                 .andExpect(jsonPath("$.message", CoreMatchers.is("The description must contain at least 3 characters!")))
                 .andDo(MockMvcResultHandlers.print());
 
 
-        this.categoryDTO.setDescription("Academia/Ginástica para os filhos");
-        this.categoryDTO.setTitle(null);
+        this.createCategoryDTO.setDescription("Academia/Ginástica para os filhos");
+        this.createCategoryDTO.setTitle(null);
 
         mvc.perform(post("/api/v1/category/create")
-                        .content(objectMapper.writeValueAsString(this.categoryDTO))
+                        .content(objectMapper.writeValueAsString(this.createCategoryDTO))
                         .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isUnprocessableEntity())
                 .andExpect(jsonPath("$.message", CoreMatchers.is("The title is mandatory!")))
                 .andDo(MockMvcResultHandlers.print());
@@ -193,10 +197,10 @@ public class CategoryControllerTests {
     @Order(8)
     @DisplayName("Category Controller: Update Category With Valid Data Then returns created")
     public void categoryController_UpdateCategoryWithValidData_ThenReturnsCreated() throws Exception {
-        when(categoryService.updateCategory(any(CategoryDTO.class), anyString())).thenReturn(this.categoryDTO);
+        when(categoryService.updateCategory(any(UpdateCategoryDTO.class), anyString())).thenReturn(this.categoryDTO);
 
-        ResultActions response = mvc.perform(put("/api/v1/category/update/{id}", this.categoryDTO.getId())
-                .content(objectMapper.writeValueAsString(this.categoryDTO))
+        ResultActions response = mvc.perform(put("/api/v1/category/update/{id}", this.createCategoryDTO.getId())
+                .content(objectMapper.writeValueAsString(this.createCategoryDTO))
                 .contentType(MediaType.APPLICATION_JSON));
 
         response.andExpect(status().isOk())
@@ -213,11 +217,11 @@ public class CategoryControllerTests {
 
         String requiredTitleSearch = UUID.randomUUID().toString();
 
-        when(categoryService.updateCategory(any(CategoryDTO.class), anyString()))
+        when(categoryService.updateCategory(any(UpdateCategoryDTO.class), anyString()))
                 .thenThrow(new ResourceNotFoundException("Category", "id", requiredTitleSearch));
 
         ResultActions response = mvc.perform(put("/api/v1/category/update/{id}", requiredTitleSearch)
-                .content(objectMapper.writeValueAsString(this.categoryDTO))
+                .content(objectMapper.writeValueAsString(this.createCategoryDTO))
                 .contentType(MediaType.APPLICATION_JSON));
 
         response.andExpect(status().isNotFound())
@@ -232,8 +236,8 @@ public class CategoryControllerTests {
     public void categoryController_DeleteCategoryWithExistingId_ThenDeleteSuccessfully() throws Exception {
         when(categoryService.deleteCategory(anyString())).thenReturn(this.categoryDTO);
 
-        ResultActions response = mvc.perform(delete("/api/v1/category/delete/{id}", this.categoryDTO.getId())
-                .content(objectMapper.writeValueAsString(this.categoryDTO))
+        ResultActions response = mvc.perform(delete("/api/v1/category/delete/{id}", this.createCategoryDTO.getId())
+                .content(objectMapper.writeValueAsString(this.createCategoryDTO))
                 .contentType(MediaType.APPLICATION_JSON));
 
         response.andExpect(status().isOk())
@@ -253,7 +257,7 @@ public class CategoryControllerTests {
                 .thenThrow(new ResourceNotFoundException("Category", "id", requiredTitleSearch));
 
         ResultActions response = mvc.perform(delete("/api/v1/category/delete/{id}", requiredTitleSearch)
-                .content(objectMapper.writeValueAsString(this.categoryDTO))
+                .content(objectMapper.writeValueAsString(this.createCategoryDTO))
                 .contentType(MediaType.APPLICATION_JSON));
 
         response.andExpect(status().isNotFound())
