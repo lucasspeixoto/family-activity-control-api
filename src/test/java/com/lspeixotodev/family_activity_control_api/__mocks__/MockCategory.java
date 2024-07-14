@@ -1,9 +1,7 @@
 package com.lspeixotodev.family_activity_control_api.__mocks__;
 
 import com.lspeixotodev.family_activity_control_api.dto.category.CategoryDTO;
-import com.lspeixotodev.family_activity_control_api.dto.category.CreateCategoryDTO;
 import com.lspeixotodev.family_activity_control_api.dto.category.CategoryUsageDTO;
-import com.lspeixotodev.family_activity_control_api.dto.category.UpdateCategoryDTO;
 import com.lspeixotodev.family_activity_control_api.entity.category.Category;
 
 import java.text.ParseException;
@@ -21,14 +19,6 @@ public class MockCategory {
 
     public CategoryDTO getCategoryDTO() throws ParseException {
         return mockCategoryDTO();
-    }
-
-    public CreateCategoryDTO getCreateCategoryDTO() throws ParseException {
-        return mockCreateCategoryDTO();
-    }
-
-    public UpdateCategoryDTO getUpdateCategoryDTO() throws ParseException {
-        return mockUpdateCategoryDTO();
     }
 
     public CategoryUsageDTO getCategoryUsageDTO() throws ParseException {
@@ -55,24 +45,6 @@ public class MockCategory {
         dto.setDescription("Academia/Ginástica para os filhos");
 
         return dto;
-    }
-
-    private CreateCategoryDTO mockCreateCategoryDTO() {
-        CreateCategoryDTO createCategoryDto = new CreateCategoryDTO();
-        createCategoryDto.setId(String.valueOf(UUID.randomUUID()));
-        createCategoryDto.setTitle("Academia/Ginástica");
-        createCategoryDto.setDescription("Academia/Ginástica para os filhos");
-
-        return createCategoryDto;
-    }
-
-    private UpdateCategoryDTO mockUpdateCategoryDTO() {
-        UpdateCategoryDTO updateCategoryDto = new UpdateCategoryDTO();
-        updateCategoryDto.setId(String.valueOf(UUID.randomUUID()));
-        updateCategoryDto.setTitle("Academia/Ginástica");
-        updateCategoryDto.setDescription("Academia/Ginástica para os filhos");
-
-        return updateCategoryDto;
     }
 
     private CategoryUsageDTO mockCategoryUsageDTO() {

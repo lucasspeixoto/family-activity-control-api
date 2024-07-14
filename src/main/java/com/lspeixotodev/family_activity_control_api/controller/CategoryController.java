@@ -1,10 +1,8 @@
 package com.lspeixotodev.family_activity_control_api.controller;
 
-import com.lspeixotodev.family_activity_control_api.dto.bill.CreateBillDTO;
 import com.lspeixotodev.family_activity_control_api.dto.category.CategoryDTO;
-import com.lspeixotodev.family_activity_control_api.dto.category.CreateCategoryDTO;
 import com.lspeixotodev.family_activity_control_api.dto.category.CategoryUsageDTO;
-import com.lspeixotodev.family_activity_control_api.dto.category.UpdateCategoryDTO;
+import com.lspeixotodev.family_activity_control_api.infra.validation.ValidationGroups.Create;
 import com.lspeixotodev.family_activity_control_api.util.constants.MediaType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -14,6 +12,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,13 +27,13 @@ public interface CategoryController {
             produces = {MediaType.APPLICATION_JSON})
     @Operation(
             summary = "Create a Category data",
-            description = "Create a Category by passing in a JSON representation of CreateBillDTO",
+            description = "Create a Category by passing in a JSON representation of CategoryDTO",
             tags = {"Category"},
             responses = {
                     @ApiResponse(
                             description = "Success",
                             responseCode = "200",
-                            content = @Content(schema = @Schema(implementation = CreateCategoryDTO.class))
+                            content = @Content(schema = @Schema(implementation = CategoryDTO.class))
                     ),
                     @ApiResponse(
                             description = "Bad Request",
@@ -58,7 +57,51 @@ public interface CategoryController {
                     )
             }
     )
-    ResponseEntity<CategoryDTO> create(@RequestBody @Valid CreateCategoryDTO createCategoryDTO);
+    ResponseEntity<CategoryDTO> create(@Validated(Create.class) CategoryDTO categoryDTO);
+
+    @PutMapping(
+            value = "/update/{id}",
+            produces = {MediaType.APPLICATION_JSON}
+    )
+    @Operation(
+            summary = "Update a Category",
+            description = "Service for Update a Category by id",
+            tags = {"Category"},
+            responses = {
+                    @ApiResponse(
+                            description = "Success",
+                            responseCode = "200",
+                            content = {
+                                    @Content(
+                                            mediaType = "application/json",
+                                            array = @ArraySchema(
+                                                    schema = @Schema(implementation = CategoryDTO.class))
+                                    )
+                            }
+                    ),
+                    @ApiResponse(
+                            description = "Bad Request",
+                            responseCode = "400",
+                            content = @Content
+                    ),
+                    @ApiResponse(
+                            description = "Unauthorized",
+                            responseCode = "401",
+                            content = @Content
+                    ),
+                    @ApiResponse(
+                            description = "Not Found",
+                            responseCode = "404",
+                            content = @Content
+                    ),
+                    @ApiResponse(
+                            description = "Internal Server Error",
+                            responseCode = "500",
+                            content = @Content
+                    )
+            }
+    )
+    ResponseEntity<CategoryDTO> update(@Valid CategoryDTO categoryDTO, String id);
 
     @GetMapping(produces = {MediaType.APPLICATION_JSON})
     @Operation(
@@ -73,7 +116,7 @@ public interface CategoryController {
                                     @Content(
                                             mediaType = "application/json",
                                             array = @ArraySchema(
-                                                    schema = @Schema(implementation = CreateCategoryDTO.class))
+                                                    schema = @Schema(implementation = CategoryDTO.class))
                                     )
                             }
                     ),
@@ -158,7 +201,7 @@ public interface CategoryController {
                                     @Content(
                                             mediaType = "application/json",
                                             array = @ArraySchema(
-                                                    schema = @Schema(implementation = CreateCategoryDTO.class))
+                                                    schema = @Schema(implementation = CategoryDTO.class))
                                     )
                             }
                     ),
@@ -184,51 +227,7 @@ public interface CategoryController {
                     )
             }
     )
-    ResponseEntity<CategoryDTO> findCategoryById(@PathVariable String id);
-
-    @PutMapping(
-            value = "/update/{id}",
-            produces = {MediaType.APPLICATION_JSON}
-    )
-    @Operation(
-            summary = "Update a Category",
-            description = "Service for Update a Category by id",
-            tags = {"Category"},
-            responses = {
-                    @ApiResponse(
-                            description = "Success",
-                            responseCode = "200",
-                            content = {
-                                    @Content(
-                                            mediaType = "application/json",
-                                            array = @ArraySchema(
-                                                    schema = @Schema(implementation = CreateCategoryDTO.class))
-                                    )
-                            }
-                    ),
-                    @ApiResponse(
-                            description = "Bad Request",
-                            responseCode = "400",
-                            content = @Content
-                    ),
-                    @ApiResponse(
-                            description = "Unauthorized",
-                            responseCode = "401",
-                            content = @Content
-                    ),
-                    @ApiResponse(
-                            description = "Not Found",
-                            responseCode = "404",
-                            content = @Content
-                    ),
-                    @ApiResponse(
-                            description = "Internal Server Error",
-                            responseCode = "500",
-                            content = @Content
-                    )
-            }
-    )
-    ResponseEntity<CategoryDTO> updateCategory(@RequestBody @Valid UpdateCategoryDTO updateCategoryDTO, @PathVariable String id);
+    ResponseEntity<CategoryDTO> findCategoryById(String id);
 
     @DeleteMapping(
             value = "/delete/{id}",
@@ -246,7 +245,7 @@ public interface CategoryController {
                                     @Content(
                                             mediaType = "application/json",
                                             array = @ArraySchema(
-                                                    schema = @Schema(implementation = CreateBillDTO.class))
+                                                    schema = @Schema(implementation = CategoryDTO.class))
                                     )
                             }
                     ),
@@ -272,5 +271,5 @@ public interface CategoryController {
                     )
             }
     )
-    ResponseEntity<CategoryDTO> deleteCategory(@PathVariable String id);
+    ResponseEntity<CategoryDTO> deleteCategory(String id);
 }

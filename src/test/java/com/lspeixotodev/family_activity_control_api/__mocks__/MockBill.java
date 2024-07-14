@@ -1,8 +1,6 @@
 package com.lspeixotodev.family_activity_control_api.__mocks__;
 
 import com.lspeixotodev.family_activity_control_api.dto.bill.BillDTO;
-import com.lspeixotodev.family_activity_control_api.dto.bill.CreateBillDTO;
-import com.lspeixotodev.family_activity_control_api.dto.bill.UpdateBillDTO;
 import com.lspeixotodev.family_activity_control_api.entity.bill.Bill;
 import com.lspeixotodev.family_activity_control_api.entity.bill.BillType;
 
@@ -23,14 +21,6 @@ public class MockBill {
         return mockSecondBill();
     }
 
-    public CreateBillDTO getCreateBillDTO() throws ParseException {
-        return mockCreateBillDTO();
-    }
-
-    public UpdateBillDTO getUpdateBillDTO() throws ParseException {
-        return mockUpdateBillDTO();
-    }
-
     public BillDTO getBillDTO() throws ParseException {
         return mockBillDTO();
     }
@@ -40,35 +30,6 @@ public class MockBill {
         simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
         Bill bill = new Bill();
         bill.setId(UUID.randomUUID());
-        bill.setTitle("Energia");
-        bill.setOwner("Lucas P");
-        bill.setAmount(new BigDecimal(89.50));
-        bill.setCategory("Contas");
-        bill.setDescription("Pagar a conta de energia");
-        bill.setFinishAt(simpleDateFormat.parse("30/10/2991"));
-        bill.setType(BillType.FIXED);
-
-        return bill;
-    }
-
-    private CreateBillDTO mockCreateBillDTO() throws ParseException {
-        simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
-        CreateBillDTO bill = new CreateBillDTO();
-        bill.setId(UUID.randomUUID().toString());
-        bill.setTitle("Energia");
-        bill.setOwner("Lucas P");
-        bill.setAmount(new BigDecimal(89.50));
-        bill.setCategory("Contas");
-        bill.setDescription("Pagar a conta de energia");
-        bill.setFinishAt(simpleDateFormat.parse("30/10/2991"));
-        bill.setType(BillType.FIXED);
-
-        return bill;
-    }
-
-    private UpdateBillDTO mockUpdateBillDTO() throws ParseException {
-        UpdateBillDTO bill = new UpdateBillDTO();
-        bill.setId(UUID.randomUUID().toString());
         bill.setTitle("Energia");
         bill.setOwner("Lucas P");
         bill.setAmount(new BigDecimal(89.50));
