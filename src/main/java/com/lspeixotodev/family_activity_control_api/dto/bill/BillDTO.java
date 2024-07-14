@@ -3,8 +3,13 @@ package com.lspeixotodev.family_activity_control_api.dto.bill;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.lspeixotodev.family_activity_control_api.entity.bill.BillType;
+import com.lspeixotodev.family_activity_control_api.infra.validation.ValidationGroups.Create;
+import com.lspeixotodev.family_activity_control_api.infra.validation.annotations.UniqueBillTitle;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -14,17 +19,27 @@ public class BillDTO {
 
     private String id;
 
+    @NotEmpty(message = "The Title is mandatory!")
+    @Size(min = 3, message = "The Title must contain at least 3 characters!")
+    @UniqueBillTitle(message = "This Bill title already exists!", groups = Create.class)
     private String title;
 
+    @NotEmpty(message = "The Owner is mandatory!")
+    @Size(min = 3, message = "The Owner must contain at least 3 characters!")
     private String owner;
 
     private BigDecimal amount = new BigDecimal(0);
 
+    @NotEmpty(message = "The Category is mandatory!")
+    @Size(min = 3, message = "The Category must contain at least 3 characters!")
     private String category;
 
+    @NotEmpty(message = "The Description is mandatory!")
+    @Size(min = 3, message = "The Description must contain at least 3 characters!")
     private String description;
 
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "America/Sao_Paulo")
+    @NotNull(message = "The Finish At is mandatory!")
     private Date finishAt;
 
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "America/Sao_Paulo")

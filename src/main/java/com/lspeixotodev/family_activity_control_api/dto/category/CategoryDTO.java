@@ -2,6 +2,11 @@ package com.lspeixotodev.family_activity_control_api.dto.category;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.lspeixotodev.family_activity_control_api.infra.validation.ValidationGroups.Create;
+import com.lspeixotodev.family_activity_control_api.infra.validation.annotations.UniqueBillTitle;
+import com.lspeixotodev.family_activity_control_api.infra.validation.annotations.UniqueCategoryTitle;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
 
 import java.util.Date;
 import java.util.Objects;
@@ -11,8 +16,13 @@ public class CategoryDTO {
 
     private String id;
 
+    @NotEmpty(message = "The Title is mandatory!")
+    @Size(min = 3, message = "The Title must contain at least 3 characters!")
+    @UniqueCategoryTitle(message = "This Category title already exists!", groups = Create.class)
     private String title;
 
+    @NotEmpty(message = "The Description is mandatory!")
+    @Size(min = 3, message = "The Description must contain at least 3 characters!")
     private String description;
 
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "America/Sao_Paulo")

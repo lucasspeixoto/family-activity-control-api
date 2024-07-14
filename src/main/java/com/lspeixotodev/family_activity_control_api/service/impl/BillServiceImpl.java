@@ -1,8 +1,6 @@
 package com.lspeixotodev.family_activity_control_api.service.impl;
 
 import com.lspeixotodev.family_activity_control_api.dto.bill.BillDTO;
-import com.lspeixotodev.family_activity_control_api.dto.bill.CreateBillDTO;
-import com.lspeixotodev.family_activity_control_api.dto.bill.UpdateBillDTO;
 import com.lspeixotodev.family_activity_control_api.entity.bill.Bill;
 import com.lspeixotodev.family_activity_control_api.infra.exceptions.ResourceNotFoundException;
 import com.lspeixotodev.family_activity_control_api.mapper.BillMapper;
@@ -30,14 +28,14 @@ public class BillServiceImpl implements BillService {
     private BillMapper billMapper;
 
     @Override
-    public BillDTO createBill(CreateBillDTO createBillDTO) {
+    public BillDTO createBill(BillDTO createBillDTO) {
         logger.info("Start creating bill at: {}", LocalDateTime.now());
 
-        Bill bill = this.billMapper.createBillDtoToEntity(createBillDTO);
+        Bill bill = this.billMapper.dtoToEntity(createBillDTO);
 
         Bill savedBill = billRepository.save(bill);
 
-        return this.billMapper.toDTO(savedBill);
+        return this.billMapper.entityToDto(savedBill);
     }
 
     @Override
@@ -60,11 +58,11 @@ public class BillServiceImpl implements BillService {
             throw new ResourceNotFoundException("Bill", "id", id);
         }
 
-        return this.billMapper.toDTO(entity.get());
+        return this.billMapper.entityToDto(entity.get());
     }
 
     @Override
-    public BillDTO updateBill(UpdateBillDTO updateBillDTO, String id) {
+    public BillDTO updateBill(BillDTO updateBillDTO, String id) {
         logger.info("Start update a bill at: {}", LocalDateTime.now());
 
         Optional<Bill> optionalBill = billRepository.findById(UUID.fromString(id));
@@ -80,10 +78,10 @@ public class BillServiceImpl implements BillService {
 
         Bill updatedBill = billRepository.save(changedBill);
 
-        return this.billMapper.toDTO(updatedBill);
+        return this.billMapper.entityToDto(updatedBill);
     }
 
-    private static Bill setBillFieldsHandler(UpdateBillDTO updateBillDTO, Bill existingBill) {
+    private static Bill setBillFieldsHandler(BillDTO updateBillDTO, Bill existingBill) {
         existingBill.setTitle(updateBillDTO.getTitle());
         existingBill.setOwner(updateBillDTO.getOwner());
         existingBill.setAmount(updateBillDTO.getAmount());
@@ -110,7 +108,7 @@ public class BillServiceImpl implements BillService {
 
         billRepository.deleteById(existingBill.getId());
 
-        return this.billMapper.toDTO(existingBill);
+        return this.billMapper.entityToDto(existingBill);
     }
 
     @Override

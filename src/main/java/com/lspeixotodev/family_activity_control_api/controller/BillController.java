@@ -1,8 +1,7 @@
 package com.lspeixotodev.family_activity_control_api.controller;
 
 import com.lspeixotodev.family_activity_control_api.dto.bill.BillDTO;
-import com.lspeixotodev.family_activity_control_api.dto.bill.CreateBillDTO;
-import com.lspeixotodev.family_activity_control_api.dto.bill.UpdateBillDTO;
+import com.lspeixotodev.family_activity_control_api.infra.validation.ValidationGroups.Create;
 import com.lspeixotodev.family_activity_control_api.util.constants.MediaType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -10,9 +9,10 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,13 +27,13 @@ public interface BillController {
             produces = {MediaType.APPLICATION_JSON})
     @Operation(
             summary = "Create a Bill data",
-            description = "Create a Bill by passing in a JSON representation of CreateBillDTO",
+            description = "Create a Bill by passing in a JSON representation of BillDTO",
             tags = {"Bill"},
             responses = {
                     @ApiResponse(
                             description = "Success",
                             responseCode = "200",
-                            content = @Content(schema = @Schema(implementation = CreateBillDTO.class))
+                            content = @Content(schema = @Schema(implementation = BillDTO.class))
                     ),
                     @ApiResponse(
                             description = "Bad Request",
@@ -57,7 +57,51 @@ public interface BillController {
                     )
             }
     )
-    ResponseEntity<BillDTO> create(@RequestBody @Valid CreateBillDTO CreateBillDTO);
+    ResponseEntity<BillDTO> create(@Validated(Create.class) BillDTO billDTO);
+
+    @PutMapping(
+            value = "/update/{id}",
+            produces = {MediaType.APPLICATION_JSON}
+    )
+    @Operation(
+            summary = "Update a Bill",
+            description = "Service for Update a Bill by id",
+            tags = {"Bill"},
+            responses = {
+                    @ApiResponse(
+                            description = "Success",
+                            responseCode = "200",
+                            content = {
+                                    @Content(
+                                            mediaType = "application/json",
+                                            array = @ArraySchema(
+                                                    schema = @Schema(implementation = BillDTO.class))
+                                    )
+                            }
+                    ),
+                    @ApiResponse(
+                            description = "Bad Request",
+                            responseCode = "400",
+                            content = @Content
+                    ),
+                    @ApiResponse(
+                            description = "Unauthorized",
+                            responseCode = "401",
+                            content = @Content
+                    ),
+                    @ApiResponse(
+                            description = "Not Found",
+                            responseCode = "404",
+                            content = @Content
+                    ),
+                    @ApiResponse(
+                            description = "Internal Server Error",
+                            responseCode = "500",
+                            content = @Content
+                    )
+            }
+    )
+    ResponseEntity<BillDTO> update(@Valid BillDTO billDTO, String id);
 
     @GetMapping(produces = {MediaType.APPLICATION_JSON})
     @Operation(
@@ -72,7 +116,7 @@ public interface BillController {
                                     @Content(
                                             mediaType = "application/json",
                                             array = @ArraySchema(
-                                                    schema = @Schema(implementation = CreateBillDTO.class))
+                                                    schema = @Schema(implementation = BillDTO.class))
                                     )
                             }
                     ),
@@ -116,7 +160,7 @@ public interface BillController {
                                     @Content(
                                             mediaType = "application/json",
                                             array = @ArraySchema(
-                                                    schema = @Schema(implementation = CreateBillDTO.class))
+                                                    schema = @Schema(implementation = BillDTO.class))
                                     )
                             }
                     ),
@@ -142,51 +186,7 @@ public interface BillController {
                     )
             }
     )
-    ResponseEntity<BillDTO> findBillById(@PathVariable String id);
-
-    @PutMapping(
-            value = "/update/{id}",
-            produces = {MediaType.APPLICATION_JSON}
-    )
-    @Operation(
-            summary = "Update a Bill",
-            description = "Service for Update a Bill by id",
-            tags = {"Bill"},
-            responses = {
-                    @ApiResponse(
-                            description = "Success",
-                            responseCode = "200",
-                            content = {
-                                    @Content(
-                                            mediaType = "application/json",
-                                            array = @ArraySchema(
-                                                    schema = @Schema(implementation = CreateBillDTO.class))
-                                    )
-                            }
-                    ),
-                    @ApiResponse(
-                            description = "Bad Request",
-                            responseCode = "400",
-                            content = @Content
-                    ),
-                    @ApiResponse(
-                            description = "Unauthorized",
-                            responseCode = "401",
-                            content = @Content
-                    ),
-                    @ApiResponse(
-                            description = "Not Found",
-                            responseCode = "404",
-                            content = @Content
-                    ),
-                    @ApiResponse(
-                            description = "Internal Server Error",
-                            responseCode = "500",
-                            content = @Content
-                    )
-            }
-    )
-    ResponseEntity<BillDTO> updateBill(@RequestBody @Valid UpdateBillDTO CreateBillDTO, @PathVariable String id);
+    ResponseEntity<BillDTO> findBillById(String id);
 
     @DeleteMapping(
             value = "/delete/{id}",
@@ -204,7 +204,7 @@ public interface BillController {
                                     @Content(
                                             mediaType = "application/json",
                                             array = @ArraySchema(
-                                                    schema = @Schema(implementation = CreateBillDTO.class))
+                                                    schema = @Schema(implementation = BillDTO.class))
                                     )
                             }
                     ),
@@ -230,7 +230,7 @@ public interface BillController {
                     )
             }
     )
-    ResponseEntity<BillDTO> deleteBill(@PathVariable String id);
+    ResponseEntity<BillDTO> deleteBill(String id);
 
     @GetMapping(
             value = "/find-by-title/{title}",
@@ -248,7 +248,7 @@ public interface BillController {
                                     @Content(
                                             mediaType = "application/json",
                                             array = @ArraySchema(
-                                                    schema = @Schema(implementation = CreateBillDTO.class))
+                                                    schema = @Schema(implementation = BillDTO.class))
                                     )
                             }
                     ),
@@ -274,5 +274,5 @@ public interface BillController {
                     )
             }
     )
-    ResponseEntity<List<BillDTO>> findBillByTitle(@PathVariable String title);
+    ResponseEntity<List<BillDTO>> findBillByTitle(String title);
 }

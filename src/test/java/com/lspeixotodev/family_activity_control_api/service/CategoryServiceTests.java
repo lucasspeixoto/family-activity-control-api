@@ -2,9 +2,7 @@ package com.lspeixotodev.family_activity_control_api.service;
 
 import com.lspeixotodev.family_activity_control_api.__mocks__.MockCategory;
 import com.lspeixotodev.family_activity_control_api.dto.category.CategoryDTO;
-import com.lspeixotodev.family_activity_control_api.dto.category.CreateCategoryDTO;
 import com.lspeixotodev.family_activity_control_api.dto.category.CategoryUsageDTO;
-import com.lspeixotodev.family_activity_control_api.dto.category.UpdateCategoryDTO;
 import com.lspeixotodev.family_activity_control_api.entity.category.Category;
 import com.lspeixotodev.family_activity_control_api.infra.exceptions.ResourceNotFoundException;
 
@@ -47,10 +45,6 @@ public class CategoryServiceTests {
 
     private CategoryDTO categoryDTO;
 
-    private CreateCategoryDTO createCategoryDTO;
-
-    private UpdateCategoryDTO updateCategoryDTO;
-
     private CategoryUsageDTO categoryUsageDTO;
 
     @InjectMocks
@@ -61,8 +55,6 @@ public class CategoryServiceTests {
     public void config() throws ParseException {
         this.category = mockCategory.getCategory();
         this.categoryDTO = mockCategory.getCategoryDTO();
-        this.createCategoryDTO = mockCategory.getCreateCategoryDTO();
-        this.updateCategoryDTO = mockCategory.getUpdateCategoryDTO();
         this.categoryUsageDTO = mockCategory.getCategoryUsageDTO();
     }
 
@@ -72,9 +64,9 @@ public class CategoryServiceTests {
     public void categoryService_WhenCreateACategory_ThenReturnCreateCategoryDto() {
         when(categoryRepository.save(any(Category.class))).thenReturn(this.category);
 
-        CreateCategoryDTO mappedCategoryDTOFromCreateCategory = this.categoryMapper.entityToCreateDTO(this.category);
+        CategoryDTO mappedCategoryDTOFromCreateCategory = this.categoryMapper.entityToDTO(this.category);
 
-        CategoryDTO categoryDTO = this.categoryService.create(this.createCategoryDTO);
+        CategoryDTO categoryDTO = this.categoryService.create(this.categoryDTO);
 
         assertThat(categoryDTO).isNotNull();
         assertThat(categoryDTO.getTitle()).isEqualTo(mappedCategoryDTOFromCreateCategory.getTitle());
@@ -118,7 +110,9 @@ public class CategoryServiceTests {
     public void categoryService_WhenFindCategoryById_ThenThrowsResourceNotFoundException() {
         when(categoryRepository.findById(any())).thenReturn((Optional.empty()));
 
-        assertThrows(ResourceNotFoundException.class, () -> this.categoryService.findCategoryById(this.category.getId().toString()));
+        assertThrows(ResourceNotFoundException.class, () ->
+                this.categoryService.findCategoryById(this.category.getId().toString())
+        );
     }
 
     @Test
@@ -128,18 +122,18 @@ public class CategoryServiceTests {
         String newTitle = "New Title";
         this.category.setTitle(newTitle);
 
-        UpdateCategoryDTO createCategoryDTO = this.categoryMapper.entityToUpdateDTO(this.category);
+        CategoryDTO categoryDTO = this.categoryMapper.entityToDTO(this.category);
 
         when(categoryRepository.findById(any())).thenReturn((Optional.of(this.category)));
         when(categoryRepository.save(any(Category.class))).thenReturn(this.category);
 
-        CategoryDTO updatedCategory = this.categoryService.updateCategory(createCategoryDTO, this.category.getId().toString());
+        CategoryDTO updatedCategory = this.categoryService.updateCategory(categoryDTO, this.category.getId().toString());
 
-        CategoryDTO mappedCreateCategoryDTO = this.categoryMapper.entityToDTO(this.category);
+        CategoryDTO mappedCategoryDTO = this.categoryMapper.entityToDTO(this.category);
 
         assertThat(updatedCategory).isNotNull();
-        assertThat(updatedCategory.getTitle()).isEqualTo(mappedCreateCategoryDTO.getTitle());
-        assertThat(updatedCategory.getDescription()).isEqualTo(mappedCreateCategoryDTO.getDescription());
+        assertThat(updatedCategory.getTitle()).isEqualTo(mappedCategoryDTO.getTitle());
+        assertThat(updatedCategory.getDescription()).isEqualTo(mappedCategoryDTO.getDescription());
     }
 
     @Test
@@ -148,7 +142,7 @@ public class CategoryServiceTests {
     public void categoryService_WhenUpdateCategory_ThenThrowsResourceNotFoundException() {
         when(categoryRepository.findById(any())).thenReturn((Optional.empty()));
 
-        assertThrows(ResourceNotFoundException.class, () -> this.categoryService.updateCategory(this.updateCategoryDTO, this.category.getId().toString()));
+        assertThrows(ResourceNotFoundException.class, () -> this.categoryService.updateCategory(this.categoryDTO, this.category.getId().toString()));
     }
 
     @Test
@@ -171,7 +165,9 @@ public class CategoryServiceTests {
     public void categoryService_WhenDeleteCategory_ThenThrowsResourceNotFoundException() {
         when(categoryRepository.findById(any())).thenReturn((Optional.empty()));
 
-        assertThrows(ResourceNotFoundException.class, () -> this.categoryService.deleteCategory(this.category.getId().toString()));
+        assertThrows(ResourceNotFoundException.class, () ->
+                this.categoryService.deleteCategory(this.category.getId().toString())
+        );
     }
 
     @Test

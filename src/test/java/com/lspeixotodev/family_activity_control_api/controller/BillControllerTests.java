@@ -4,8 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lspeixotodev.family_activity_control_api.__mocks__.MockBill;
 import com.lspeixotodev.family_activity_control_api.controller.impl.BillControllerImpl;
 import com.lspeixotodev.family_activity_control_api.dto.bill.BillDTO;
-import com.lspeixotodev.family_activity_control_api.dto.bill.CreateBillDTO;
-import com.lspeixotodev.family_activity_control_api.dto.bill.UpdateBillDTO;
 import com.lspeixotodev.family_activity_control_api.entity.bill.Bill;
 import com.lspeixotodev.family_activity_control_api.infra.exceptions.ResourceNotFoundException;
 import com.lspeixotodev.family_activity_control_api.repository.BillRepository;
@@ -62,15 +60,10 @@ public class BillControllerTests {
 
     private BillDTO billDTO;
 
-    private CreateBillDTO createBillDTO;
-
-    private UpdateBillDTO updateBillDTO;
 
     @BeforeEach
     public void config() throws ParseException {
         this.bill = mockBill.getBill();
-        this.createBillDTO = mockBill.getCreateBillDTO();
-        this.updateBillDTO = mockBill.getUpdateBillDTO();
         this.billDTO = mockBill.getBillDTO();
     }
 
@@ -78,10 +71,10 @@ public class BillControllerTests {
     @Order(1)
     @DisplayName("Bill Controller: Create Bill With Valid Data Then returns created")
     public void billController_CreateBillWithValidData_ThenReturnsCreated() throws Exception {
-        when(billService.createBill(any(CreateBillDTO.class))).thenReturn(this.billDTO);
+        when(billService.createBill(any(BillDTO.class))).thenReturn(this.billDTO);
 
         ResultActions response = mvc.perform(post("/api/v1/bill/create")
-                .content(objectMapper.writeValueAsString(this.createBillDTO))
+                .content(objectMapper.writeValueAsString(this.billDTO))
                 .contentType(MediaType.APPLICATION_JSON));
 
         response.andExpect(status().isCreated())
@@ -100,21 +93,21 @@ public class BillControllerTests {
     @Order(2)
     @DisplayName("Bill Controller: Create Bill With Invalid Title Then Throws UnprocessableEntity")
     public void billController_CreateBillWithInvalidTitle_ThenThrowsUnprocessableEntity() throws Exception {
-        when(billService.createBill(any(CreateBillDTO.class))).thenReturn(this.billDTO);
+        when(billService.createBill(any(BillDTO.class))).thenReturn(this.billDTO);
 
-        this.createBillDTO.setTitle("ti");
+        this.billDTO.setTitle("ti");
 
         mvc.perform(post("/api/v1/bill/create")
-                        .content(objectMapper.writeValueAsString(this.createBillDTO))
+                        .content(objectMapper.writeValueAsString(this.billDTO))
                         .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isUnprocessableEntity())
                 .andExpect(jsonPath("$.message", CoreMatchers.is("The Title must contain at least 3 characters!")))
                 .andDo(MockMvcResultHandlers.print());
 
 
-        this.createBillDTO.setTitle(null);
+        this.billDTO.setTitle(null);
 
         mvc.perform(post("/api/v1/bill/create")
-                        .content(objectMapper.writeValueAsString(this.createBillDTO))
+                        .content(objectMapper.writeValueAsString(this.billDTO))
                         .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isUnprocessableEntity())
                 .andExpect(jsonPath("$.message", CoreMatchers.is("The Title is mandatory!")))
                 .andDo(MockMvcResultHandlers.print());
@@ -124,21 +117,21 @@ public class BillControllerTests {
     @Order(3)
     @DisplayName("Bill Controller: Create Bill With Invalid Owner Then Throws UnprocessableEntity")
     public void billController_CreateBillWithInvalidOwner_ThenThrowsUnprocessableEntity() throws Exception {
-        when(billService.createBill(any(CreateBillDTO.class))).thenReturn(this.billDTO);
+        when(billService.createBill(any(BillDTO.class))).thenReturn(this.billDTO);
 
-        this.createBillDTO.setOwner("ti");
+        this.billDTO.setOwner("ti");
 
         mvc.perform(post("/api/v1/bill/create")
-                        .content(objectMapper.writeValueAsString(this.createBillDTO))
+                        .content(objectMapper.writeValueAsString(this.billDTO))
                         .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isUnprocessableEntity())
                 .andExpect(jsonPath("$.message", CoreMatchers.is("The Owner must contain at least 3 characters!")))
                 .andDo(MockMvcResultHandlers.print());
 
 
-        this.createBillDTO.setOwner(null);
+        this.billDTO.setOwner(null);
 
         mvc.perform(post("/api/v1/bill/create")
-                        .content(objectMapper.writeValueAsString(this.createBillDTO))
+                        .content(objectMapper.writeValueAsString(this.billDTO))
                         .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isUnprocessableEntity())
                 .andExpect(jsonPath("$.message", CoreMatchers.is("The Owner is mandatory!")))
                 .andDo(MockMvcResultHandlers.print());
@@ -149,21 +142,21 @@ public class BillControllerTests {
     @Order(4)
     @DisplayName("Bill Controller: Create Bill With Invalid Category Then Throws UnprocessableEntity")
     public void billController_CreateBillWithInvalidCategory_ThenThrowsUnprocessableEntity() throws Exception {
-        when(billService.createBill(any(CreateBillDTO.class))).thenReturn(this.billDTO);
+        when(billService.createBill(any(BillDTO.class))).thenReturn(this.billDTO);
 
-        this.createBillDTO.setCategory("ti");
+        this.billDTO.setCategory("ti");
 
         mvc.perform(post("/api/v1/bill/create")
-                        .content(objectMapper.writeValueAsString(this.createBillDTO))
+                        .content(objectMapper.writeValueAsString(this.billDTO))
                         .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isUnprocessableEntity())
                 .andExpect(jsonPath("$.message", CoreMatchers.is("The Category must contain at least 3 characters!")))
                 .andDo(MockMvcResultHandlers.print());
 
 
-        this.createBillDTO.setCategory(null);
+        this.billDTO.setCategory(null);
 
         mvc.perform(post("/api/v1/bill/create")
-                        .content(objectMapper.writeValueAsString(this.createBillDTO))
+                        .content(objectMapper.writeValueAsString(this.billDTO))
                         .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isUnprocessableEntity())
                 .andExpect(jsonPath("$.message", CoreMatchers.is("The Category is mandatory!")))
                 .andDo(MockMvcResultHandlers.print());
@@ -174,21 +167,21 @@ public class BillControllerTests {
     @Order(5)
     @DisplayName("Bill Controller: Create Bill With Invalid Description Then Throws UnprocessableEntity")
     public void billController_CreateBillWithInvalidDescription_ThenThrowsUnprocessableEntity() throws Exception {
-        when(billService.createBill(any(CreateBillDTO.class))).thenReturn(this.billDTO);
+        when(billService.createBill(any(BillDTO.class))).thenReturn(this.billDTO);
 
-        this.createBillDTO.setDescription("ti");
+        this.billDTO.setDescription("ti");
 
         mvc.perform(post("/api/v1/bill/create")
-                        .content(objectMapper.writeValueAsString(this.createBillDTO))
+                        .content(objectMapper.writeValueAsString(this.billDTO))
                         .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isUnprocessableEntity())
                 .andExpect(jsonPath("$.message", CoreMatchers.is("The Description must contain at least 3 characters!")))
                 .andDo(MockMvcResultHandlers.print());
 
 
-        this.createBillDTO.setDescription(null);
+        this.billDTO.setDescription(null);
 
         mvc.perform(post("/api/v1/bill/create")
-                        .content(objectMapper.writeValueAsString(this.createBillDTO))
+                        .content(objectMapper.writeValueAsString(this.billDTO))
                         .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isUnprocessableEntity())
                 .andExpect(jsonPath("$.message", CoreMatchers.is("The Description is mandatory!")))
                 .andDo(MockMvcResultHandlers.print());
@@ -199,12 +192,12 @@ public class BillControllerTests {
     @Order(6)
     @DisplayName("Bill Controller: Create Bill With Invalid FinishAt Then Throws UnprocessableEntity")
     public void billController_CreateBillWithInvalidFinishAt_ThenThrowsUnprocessableEntity() throws Exception {
-        when(billService.createBill(any(CreateBillDTO.class))).thenReturn(this.billDTO);
+        when(billService.createBill(any(BillDTO.class))).thenReturn(this.billDTO);
 
-        this.createBillDTO.setFinishAt(null);
+        this.billDTO.setFinishAt(null);
 
         mvc.perform(post("/api/v1/bill/create")
-                        .content(objectMapper.writeValueAsString(this.createBillDTO))
+                        .content(objectMapper.writeValueAsString(this.billDTO))
                         .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isUnprocessableEntity())
                 .andExpect(jsonPath("$.message", CoreMatchers.is("The Finish At is mandatory!")))
                 .andDo(MockMvcResultHandlers.print());
@@ -285,10 +278,10 @@ public class BillControllerTests {
     @Order(12)
     @DisplayName("Bill Controller: Update Bill With Valid Data Then returns ok")
     public void billController_UpdateBillWithValidData_ThenReturnsCreated() throws Exception {
-        when(billService.updateBill(any(UpdateBillDTO.class), anyString())).thenReturn(this.billDTO);
+        when(billService.updateBill(any(BillDTO.class), anyString())).thenReturn(this.billDTO);
 
         ResultActions response = mvc.perform(put("/api/v1/bill/update/{id}", this.billDTO.getId())
-                .content(objectMapper.writeValueAsString(this.updateBillDTO))
+                .content(objectMapper.writeValueAsString(this.billDTO))
                 .contentType(MediaType.APPLICATION_JSON));
 
         response.andExpect(status().isOk())
@@ -310,11 +303,11 @@ public class BillControllerTests {
 
         String requiredTitleSearch = UUID.randomUUID().toString();
 
-        when(billService.updateBill(any(UpdateBillDTO.class), anyString()))
+        when(billService.updateBill(any(BillDTO.class), anyString()))
                 .thenThrow(new ResourceNotFoundException("Bill", "id", requiredTitleSearch));
 
         ResultActions response = mvc.perform(put("/api/v1/bill/update/{id}", requiredTitleSearch)
-                .content(objectMapper.writeValueAsString(this.updateBillDTO))
+                .content(objectMapper.writeValueAsString(this.billDTO))
                 .contentType(MediaType.APPLICATION_JSON));
 
         response.andExpect(status().isNotFound())

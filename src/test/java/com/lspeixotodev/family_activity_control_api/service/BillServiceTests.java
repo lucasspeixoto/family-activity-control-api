@@ -2,8 +2,7 @@ package com.lspeixotodev.family_activity_control_api.service;
 
 import com.lspeixotodev.family_activity_control_api.__mocks__.MockBill;
 import com.lspeixotodev.family_activity_control_api.dto.bill.BillDTO;
-import com.lspeixotodev.family_activity_control_api.dto.bill.CreateBillDTO;
-import com.lspeixotodev.family_activity_control_api.dto.bill.UpdateBillDTO;
+
 import com.lspeixotodev.family_activity_control_api.entity.bill.Bill;
 import com.lspeixotodev.family_activity_control_api.infra.exceptions.ResourceNotFoundException;
 import com.lspeixotodev.family_activity_control_api.mapper.BillMapper;
@@ -43,9 +42,7 @@ public class BillServiceTests {
 
     private Bill bill;
 
-    private CreateBillDTO createBillDTO;
-
-    private UpdateBillDTO updateBillDTO;
+    private BillDTO billDTO;
 
     @InjectMocks
     public MockBill mockBill;
@@ -54,8 +51,7 @@ public class BillServiceTests {
     @BeforeEach
     public void config() throws ParseException {
         this.bill = mockBill.getBill();
-        this.createBillDTO = mockBill.getCreateBillDTO();
-        this.updateBillDTO = mockBill.getUpdateBillDTO();
+        this.billDTO = mockBill.getBillDTO();
     }
 
     @Test
@@ -64,18 +60,18 @@ public class BillServiceTests {
     public void billService_WhenCreateABill_ThenReturnCreateBillDto() {
         when(billRepository.save(any(Bill.class))).thenReturn(this.bill);
 
-        CreateBillDTO mappedCreateBillFromBill = this.billMapper.entityToCreateBillDTO(this.bill);
+        BillDTO mappedCreateBillFromBill = this.billMapper.entityToDto(this.bill);
 
-        BillDTO createBillDTO = this.billService.createBill(this.createBillDTO);
+        BillDTO billDTO = this.billService.createBill(this.billDTO);
 
-        assertThat(createBillDTO).isNotNull();
-        assertThat(createBillDTO.getTitle()).isEqualTo(mappedCreateBillFromBill.getTitle());
-        assertThat(createBillDTO.getOwner()).isEqualTo(mappedCreateBillFromBill.getOwner());
-        assertThat(createBillDTO.getCategory()).isEqualTo(mappedCreateBillFromBill.getCategory());
-        assertThat(createBillDTO.getAmount()).isEqualTo(mappedCreateBillFromBill.getAmount());
-        assertThat(createBillDTO.getDescription()).isEqualTo(mappedCreateBillFromBill.getDescription());
-        assertThat(createBillDTO.getFinishAt()).isEqualTo(mappedCreateBillFromBill.getFinishAt());
-        assertThat(createBillDTO.getType()).isEqualTo(mappedCreateBillFromBill.getType());
+        assertThat(billDTO).isNotNull();
+        assertThat(billDTO.getTitle()).isEqualTo(mappedCreateBillFromBill.getTitle());
+        assertThat(billDTO.getOwner()).isEqualTo(mappedCreateBillFromBill.getOwner());
+        assertThat(billDTO.getCategory()).isEqualTo(mappedCreateBillFromBill.getCategory());
+        assertThat(billDTO.getAmount()).isEqualTo(mappedCreateBillFromBill.getAmount());
+        assertThat(billDTO.getDescription()).isEqualTo(mappedCreateBillFromBill.getDescription());
+        assertThat(billDTO.getFinishAt()).isEqualTo(mappedCreateBillFromBill.getFinishAt());
+        assertThat(billDTO.getType()).isEqualTo(mappedCreateBillFromBill.getType());
 
     }
 
@@ -103,7 +99,7 @@ public class BillServiceTests {
 
         BillDTO billDTO = this.billService.findBillById(this.bill.getId().toString());
 
-        BillDTO mappedBillDTO = this.billMapper.toDTO(this.bill);
+        BillDTO mappedBillDTO = this.billMapper.entityToDto(this.bill);
 
         assertThat(billDTO).isNotNull();
         assertThat(billDTO).isEqualTo(mappedBillDTO);
@@ -128,7 +124,9 @@ public class BillServiceTests {
 
         when(billRepository.findById(any())).thenReturn((Optional.empty()));
 
-        assertThrows(ResourceNotFoundException.class, () -> this.billService.updateBill(this.updateBillDTO, this.bill.getId().toString()));
+        assertThrows(ResourceNotFoundException.class, () ->
+                this.billService.updateBill(this.billDTO, this.bill.getId().toString())
+        );
 
     }
 
@@ -140,12 +138,12 @@ public class BillServiceTests {
         String newTitle = "New Title";
         this.bill.setTitle(newTitle);
 
-        UpdateBillDTO updateBillDTO = this.billMapper.entityToUpdateBillDTO(this.bill);
+        BillDTO billDTO = this.billMapper.entityToDto(this.bill);
 
         when(billRepository.findById(any())).thenReturn((Optional.of(this.bill)));
         when(billRepository.save(any(Bill.class))).thenReturn(this.bill);
 
-        BillDTO updatedBill = this.billService.updateBill(updateBillDTO, this.bill.getId().toString());
+        BillDTO updatedBill = this.billService.updateBill(billDTO, this.bill.getId().toString());
 
         assertThat(updatedBill).isNotNull();
         assertThat(updatedBill.getTitle()).isEqualTo(newTitle);
@@ -168,7 +166,7 @@ public class BillServiceTests {
     @DisplayName("Bill Service: When Delete Bill then return BillDTO")
     public void billService_WhenDeleteBill_ThenReturnsBillDTO() {
 
-        BillDTO billDTO = this.billMapper.toDTO(this.bill);
+        BillDTO billDTO = this.billMapper.entityToDto(this.bill);
 
         when(billRepository.findById(any())).thenReturn((Optional.of(this.bill)));
 

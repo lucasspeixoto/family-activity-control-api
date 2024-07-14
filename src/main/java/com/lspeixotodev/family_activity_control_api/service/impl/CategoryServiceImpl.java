@@ -1,10 +1,10 @@
 package com.lspeixotodev.family_activity_control_api.service.impl;
 
 import com.lspeixotodev.family_activity_control_api.dto.category.CategoryDTO;
-import com.lspeixotodev.family_activity_control_api.dto.category.CreateCategoryDTO;
+import com.lspeixotodev.family_activity_control_api.dto.category.CategoryDTO;
 
 import com.lspeixotodev.family_activity_control_api.dto.category.CategoryUsageDTO;
-import com.lspeixotodev.family_activity_control_api.dto.category.UpdateCategoryDTO;
+import com.lspeixotodev.family_activity_control_api.dto.category.CategoryDTO;
 import com.lspeixotodev.family_activity_control_api.entity.category.Category;
 
 import com.lspeixotodev.family_activity_control_api.infra.exceptions.ResourceNotFoundException;
@@ -33,10 +33,10 @@ public class CategoryServiceImpl implements CategoryService {
     private CategoryMapper categoryMapper;
 
     @Override
-    public CategoryDTO create(CreateCategoryDTO createCategoryDTO) {
+    public CategoryDTO create(CategoryDTO categoryDTO) {
         logger.info("Start creating category at: {}", LocalDateTime.now());
 
-        Category bill = this.categoryMapper.createDTOToEntity(createCategoryDTO);
+        Category bill = this.categoryMapper.dtoToEntity(categoryDTO);
 
         Category savedCategory = categoryRepository.save(bill);
 
@@ -67,7 +67,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public CategoryDTO updateCategory(UpdateCategoryDTO updateCategoryDTO, String id) {
+    public CategoryDTO updateCategory(CategoryDTO categoryDTO, String id) {
         logger.info("Start update a category at: {}", LocalDateTime.now());
 
         Optional<Category> optionalCategory = categoryRepository.findById(UUID.fromString(id));
@@ -79,7 +79,7 @@ public class CategoryServiceImpl implements CategoryService {
 
         Category existingCategory = optionalCategory.get();
 
-        Category changedCategory = setCategoryFieldsHandler(updateCategoryDTO, existingCategory);
+        Category changedCategory = setCategoryFieldsHandler(categoryDTO, existingCategory);
 
         Category updatedCategory = categoryRepository.save(changedCategory);
 
@@ -111,9 +111,9 @@ public class CategoryServiceImpl implements CategoryService {
         return this.categoryMapper.entitiesToCategoryUsages(categories);
     }
 
-    private Category setCategoryFieldsHandler(UpdateCategoryDTO updateCategoryDTO, Category existingCategory) {
-        existingCategory.setTitle(updateCategoryDTO.getTitle());
-        existingCategory.setDescription(updateCategoryDTO.getDescription());
+    private Category setCategoryFieldsHandler(CategoryDTO categoryDTO, Category existingCategory) {
+        existingCategory.setTitle(categoryDTO.getTitle());
+        existingCategory.setDescription(categoryDTO.getDescription());
         return existingCategory;
     }
 
