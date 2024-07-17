@@ -128,7 +128,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
         ErrorDetail errorDetails = new ErrorDetail(
                 LocalDateTime.now(),
-                exception.getLocalizedMessage(),
+                exception.getMessage(),
                 webRequest.getDescription(false),
                 status.value()
         );

@@ -23,7 +23,7 @@ public class Category {
     private String description;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(mappedBy = "category")
     private List<Bill> bills;
 
     @Column(name = "created_at", nullable = false, updatable = false)
