@@ -3,7 +3,6 @@ package com.lspeixotodev.family_activity_control_api.dto.category;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.lspeixotodev.family_activity_control_api.infra.validation.ValidationGroups.Create;
-import com.lspeixotodev.family_activity_control_api.infra.validation.annotations.UniqueBillTitle;
 import com.lspeixotodev.family_activity_control_api.infra.validation.annotations.UniqueCategoryTitle;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;

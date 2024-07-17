@@ -1,11 +1,15 @@
 package com.lspeixotodev.family_activity_control_api.service.impl;
 
 import com.lspeixotodev.family_activity_control_api.dto.bill.BillDTO;
+import com.lspeixotodev.family_activity_control_api.dto.category.CategoryDTO;
 import com.lspeixotodev.family_activity_control_api.entity.bill.Bill;
+import com.lspeixotodev.family_activity_control_api.entity.category.Category;
 import com.lspeixotodev.family_activity_control_api.infra.exceptions.ResourceNotFoundException;
 import com.lspeixotodev.family_activity_control_api.mapper.BillMapper;
 import com.lspeixotodev.family_activity_control_api.repository.BillRepository;
+import com.lspeixotodev.family_activity_control_api.repository.CategoryRepository;
 import com.lspeixotodev.family_activity_control_api.service.BillService;
+import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,14 +28,27 @@ public class BillServiceImpl implements BillService {
     @Autowired
     private BillRepository billRepository;
 
+
+    @Autowired
+    private CategoryRepository categoryRepository;
+
+    @Autowired
+    private CategoryServiceImpl categoryService;
+
     @Autowired
     private BillMapper billMapper;
 
     @Override
-    public BillDTO createBill(BillDTO createBillDTO) {
+    public BillDTO createBill(BillDTO billDTO) {
         logger.info("Start creating bill at: {}", LocalDateTime.now());
 
-        Bill bill = this.billMapper.dtoToEntity(createBillDTO);
+        CategoryDTO categoryDTO = categoryService.findCategoryById(billDTO.getCategoryId());
+
+        Category category = categoryService.categoryDTOToCategory(categoryDTO);
+
+        Bill bill = this.billMapper.dtoToEntity(billDTO);
+
+        bill.setCategory(category);
 
         Bill savedBill = billRepository.save(bill);
 
@@ -62,7 +79,7 @@ public class BillServiceImpl implements BillService {
     }
 
     @Override
-    public BillDTO updateBill(BillDTO updateBillDTO, String id) {
+    public BillDTO updateBill(BillDTO billDTO, String id) {
         logger.info("Start update a bill at: {}", LocalDateTime.now());
 
         Optional<Bill> optionalBill = billRepository.findById(UUID.fromString(id));
@@ -72,20 +89,24 @@ public class BillServiceImpl implements BillService {
             throw new ResourceNotFoundException("Bill", "id", id);
         }
 
+        CategoryDTO categoryDTO = categoryService.findCategoryById(billDTO.getCategoryId());
+
+        Category category = categoryService.categoryDTOToCategory(categoryDTO);
+
         Bill existingBill = optionalBill.get();
 
-        Bill changedBill = setBillFieldsHandler(updateBillDTO, existingBill);
+        Bill changedBill = setBillFieldsHandler(billDTO, existingBill, category);
 
         Bill updatedBill = billRepository.save(changedBill);
 
         return this.billMapper.entityToDto(updatedBill);
     }
 
-    private static Bill setBillFieldsHandler(BillDTO updateBillDTO, Bill existingBill) {
+    private static Bill setBillFieldsHandler(BillDTO updateBillDTO, Bill existingBill, Category category) {
         existingBill.setTitle(updateBillDTO.getTitle());
         existingBill.setOwner(updateBillDTO.getOwner());
         existingBill.setAmount(updateBillDTO.getAmount());
-        existingBill.setCategory(updateBillDTO.getCategory());
+        existingBill.setCategory(category);
         existingBill.setDescription(updateBillDTO.getDescription());
         existingBill.setFinishAt(updateBillDTO.getFinishAt());
         existingBill.setType(updateBillDTO.getType());

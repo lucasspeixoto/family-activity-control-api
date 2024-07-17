@@ -1,5 +1,6 @@
 package com.lspeixotodev.family_activity_control_api.entity.bill;
 
+import com.lspeixotodev.family_activity_control_api.entity.category.Category;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -25,8 +26,9 @@ public class Bill {
 
     private BigDecimal amount;
 
-    @Column(nullable = false, length = 50)
-    private String category;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
+    private Category category;
 
     @Column(nullable = false, length = 100)
     private String description;
@@ -49,7 +51,7 @@ public class Bill {
     public Bill() {
     }
 
-    public Bill(UUID id, String title, String owner, BigDecimal amount, String category, String description, Date finishAt, Date createdAt, Date updatedAt, BillType type) {
+    public Bill(UUID id, String title, String owner, BigDecimal amount, Category category, String description, Date finishAt, Date createdAt, Date updatedAt, BillType type) {
         this.id = id;
         this.title = title;
         this.owner = owner;
@@ -62,7 +64,7 @@ public class Bill {
         this.type = type;
     }
 
-    public Bill(String title, String owner, BigDecimal amount, String category, String description, Date finishAt, Date createdAt, Date updatedAt, BillType type) {
+    public Bill(String title, String owner, BigDecimal amount, Category category, String description, Date finishAt, Date createdAt, Date updatedAt, BillType type) {
         this.title = title;
         this.owner = owner;
         this.amount = amount;
@@ -127,11 +129,11 @@ public class Bill {
         this.owner = owner;
     }
 
-    public String getCategory() {
+    public Category getCategory() {
         return category;
     }
 
-    public void setCategory(String category) {
+    public void setCategory(Category category) {
         this.category = category;
     }
 
@@ -183,16 +185,16 @@ public class Bill {
     @Override
     public String toString() {
         return "Bill {" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", owner='" + owner + '\'' +
-                ", amount=" + amount +
-                ", category='" + category + '\'' +
-                ", description='" + description + '\'' +
-                ", finishAt=" + finishAt +
-                ", type=" + type +
-                ", createdAt=" + createdAt +
-                ", updatedAt=" + updatedAt +
+                "id: " + id +
+                ", title: '" + title + '\'' +
+                ", owner: '" + owner + '\'' +
+                ", amount: " + amount +
+                ", category: '" + category.toString() + '\'' +
+                ", description: '" + description + '\'' +
+                ", finishAt: " + finishAt +
+                ", type: " + type +
+                ", createdAt: " + createdAt +
+                ", updatedAt: " + updatedAt +
                 '}';
     }
 }

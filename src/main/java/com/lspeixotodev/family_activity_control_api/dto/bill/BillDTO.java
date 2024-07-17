@@ -30,9 +30,8 @@ public class BillDTO {
 
     private BigDecimal amount = new BigDecimal(0);
 
-    @NotEmpty(message = "The Category is mandatory!")
-    @Size(min = 3, message = "The Category must contain at least 3 characters!")
-    private String category;
+    @NotEmpty(message = "The Category Id is mandatory!")
+    private String categoryId;
 
     @NotEmpty(message = "The Description is mandatory!")
     @Size(min = 3, message = "The Description must contain at least 3 characters!")
@@ -56,12 +55,12 @@ public class BillDTO {
     public BillDTO() {
     }
 
-    public BillDTO(String id, String title, String owner, BigDecimal amount, String category, String description, Date finishAt, Date createdAt, Date updatedAt, BillType type) {
+    public BillDTO(String id, String title, String owner, BigDecimal amount, String categoryId, String description, Date finishAt, Date createdAt, Date updatedAt, BillType type) {
         this.id = id;
         this.title = title;
         this.owner = owner;
         this.amount = amount;
-        this.category = category;
+        this.categoryId = categoryId;
         this.description = description;
         this.finishAt = finishAt;
         this.createdAt = createdAt;
@@ -69,11 +68,11 @@ public class BillDTO {
         this.type = type;
     }
 
-    public BillDTO(String title, String owner, BigDecimal amount, String category, String description, Date finishAt, Date createdAt, Date updatedAt, BillType type) {
+    public BillDTO(String title, String owner, BigDecimal amount, String categoryId, String description, Date finishAt, Date createdAt, Date updatedAt, BillType type) {
         this.title = title;
         this.owner = owner;
         this.amount = amount;
-        this.category = category;
+        this.categoryId = categoryId;
         this.description = description;
         this.finishAt = finishAt;
         this.createdAt = createdAt;
@@ -113,12 +112,12 @@ public class BillDTO {
         this.owner = owner;
     }
 
-    public String getCategory() {
-        return category;
+    public String getCategoryId() {
+        return categoryId;
     }
 
-    public void setCategory(String category) {
-        this.category = category;
+    public void setCategoryId(String categoryId) {
+        this.categoryId = categoryId;
     }
 
     public String getDescription() {

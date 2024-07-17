@@ -1,7 +1,9 @@
 package com.lspeixotodev.family_activity_control_api.repository;
 
 import com.lspeixotodev.family_activity_control_api.__mocks__.MockBill;
+import com.lspeixotodev.family_activity_control_api.__mocks__.MockCategory;
 import com.lspeixotodev.family_activity_control_api.entity.bill.Bill;
+import com.lspeixotodev.family_activity_control_api.entity.category.Category;
 import org.junit.jupiter.api.*;
 import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,12 +26,21 @@ public class BillRepositoryTests {
     @Autowired
     private BillRepository billRepository;
 
+    @Autowired
+    private CategoryRepository categoryRepository;
+
     public Bill bill;
 
     public Bill secondBill;
 
+    public Category category;
+
     @InjectMocks
     public MockBill mockBill;
+
+    @InjectMocks
+    public MockCategory mockCategory;
+
 
     @BeforeEach
     public void config() throws ParseException {
@@ -42,6 +53,7 @@ public class BillRepositoryTests {
     @Order(1)
     public void billRepository_SaveBill_ReturnsSavedBill() {
 
+
         Bill savedBill = billRepository.save(this.bill);
 
         assertThat(savedBill).isNotNull();
@@ -51,7 +63,6 @@ public class BillRepositoryTests {
         assertThat(savedBill.getFinishAt().getTime()).isEqualTo(this.bill.getFinishAt().getTime());
         assertThat(savedBill.getAmount()).isEqualTo(this.bill.getAmount());
         assertThat(savedBill.getType()).isEqualTo(this.bill.getType());
-        assertThat(savedBill.getCategory()).isEqualTo(this.bill.getCategory());
     }
 
     @Test

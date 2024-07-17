@@ -34,6 +34,7 @@ public interface CategoryMapper {
 
     @Mapping(source = "title", target = "value")
     @Mapping(source = "description", target = "viewValue")
+    @Mapping(target = "id", expression = "java(entity.getId() != null ? entity.getId().toString() : null)")
     List<CategoryUsageDTO> entitiesToCategoryUsages(List<Category> entities);
     // ----------------------------------------
 

@@ -2,13 +2,16 @@ package com.lspeixotodev.family_activity_control_api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lspeixotodev.family_activity_control_api.__mocks__.MockBill;
+import com.lspeixotodev.family_activity_control_api.__mocks__.MockCategory;
 import com.lspeixotodev.family_activity_control_api.controller.impl.BillControllerImpl;
 import com.lspeixotodev.family_activity_control_api.dto.bill.BillDTO;
+import com.lspeixotodev.family_activity_control_api.dto.category.CategoryDTO;
 import com.lspeixotodev.family_activity_control_api.entity.bill.Bill;
 import com.lspeixotodev.family_activity_control_api.infra.exceptions.ResourceNotFoundException;
 import com.lspeixotodev.family_activity_control_api.repository.BillRepository;
 import com.lspeixotodev.family_activity_control_api.service.impl.BillServiceImpl;
 
+import com.lspeixotodev.family_activity_control_api.service.impl.CategoryServiceImpl;
 import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -48,10 +51,16 @@ public class BillControllerTests {
     private BillServiceImpl billService;
 
     @MockBean
+    private CategoryServiceImpl categoryService;
+
+    @MockBean
     private BillRepository billRepository;
 
     @InjectMocks
     public MockBill mockBill;
+
+    @InjectMocks
+    public MockCategory mockCategory;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -81,7 +90,7 @@ public class BillControllerTests {
                 .andExpect(jsonPath("$.title", CoreMatchers.is("Energia")))
                 .andExpect(jsonPath("$.owner", CoreMatchers.is("Lucas P")))
                 .andExpect(jsonPath("$.amount", CoreMatchers.is(89.50)))
-                .andExpect(jsonPath("$.category", CoreMatchers.is("Contas")))
+                .andExpect(jsonPath("$.categoryId", CoreMatchers.is("8de274fd-6a14-46be-9816-4552a71f9e16")))
                 .andExpect(jsonPath("$.description", CoreMatchers.is("Pagar a conta de energia")))
                 .andExpect(jsonPath("$.finishAt", CoreMatchers.is("2991-10-30T00:00:00")))
                 .andExpect(jsonPath("$.type", CoreMatchers.is("FIXED")))
@@ -138,33 +147,9 @@ public class BillControllerTests {
 
     }
 
+
     @Test
     @Order(4)
-    @DisplayName("Bill Controller: Create Bill With Invalid Category Then Throws UnprocessableEntity")
-    public void billController_CreateBillWithInvalidCategory_ThenThrowsUnprocessableEntity() throws Exception {
-        when(billService.createBill(any(BillDTO.class))).thenReturn(this.billDTO);
-
-        this.billDTO.setCategory("ti");
-
-        mvc.perform(post("/api/v1/bill/create")
-                        .content(objectMapper.writeValueAsString(this.billDTO))
-                        .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isUnprocessableEntity())
-                .andExpect(jsonPath("$.message", CoreMatchers.is("The Category must contain at least 3 characters!")))
-                .andDo(MockMvcResultHandlers.print());
-
-
-        this.billDTO.setCategory(null);
-
-        mvc.perform(post("/api/v1/bill/create")
-                        .content(objectMapper.writeValueAsString(this.billDTO))
-                        .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isUnprocessableEntity())
-                .andExpect(jsonPath("$.message", CoreMatchers.is("The Category is mandatory!")))
-                .andDo(MockMvcResultHandlers.print());
-
-    }
-
-    @Test
-    @Order(5)
     @DisplayName("Bill Controller: Create Bill With Invalid Description Then Throws UnprocessableEntity")
     public void billController_CreateBillWithInvalidDescription_ThenThrowsUnprocessableEntity() throws Exception {
         when(billService.createBill(any(BillDTO.class))).thenReturn(this.billDTO);
@@ -189,7 +174,7 @@ public class BillControllerTests {
     }
 
     @Test
-    @Order(6)
+    @Order(5)
     @DisplayName("Bill Controller: Create Bill With Invalid FinishAt Then Throws UnprocessableEntity")
     public void billController_CreateBillWithInvalidFinishAt_ThenThrowsUnprocessableEntity() throws Exception {
         when(billService.createBill(any(BillDTO.class))).thenReturn(this.billDTO);
@@ -205,7 +190,7 @@ public class BillControllerTests {
     }
 
     @Test
-    @Order(7)
+    @Order(6)
     @DisplayName("Bill Controller: getAllBills Then Returns BillDTO List")
     public void billController_getAllBills_ThenReturnsBillDTOList() throws Exception {
         when(billService.getAllBills()).thenReturn(Collections.singletonList(this.billDTO));
@@ -218,7 +203,7 @@ public class BillControllerTests {
     }
 
     @Test
-    @Order(8)
+    @Order(7)
     @DisplayName("Bill Controller: When Find Bill By Id Then Return BillDTO")
     public void billController_WhenFindBillByIdThatExists_ThenReturnBillDTO() throws Exception {
         String requiredIdSearch = UUID.randomUUID().toString();
@@ -232,7 +217,7 @@ public class BillControllerTests {
     }
 
     @Test
-    @Order(9)
+    @Order(8)
     @DisplayName("Bill Controller: When Find Bill By Id Then Throws ResourceNotFoundException")
     public void billController_WhenFindBillByIdThatDoesNotExists_ThenThrowsResourceNotFoundException() throws Exception {
         String requiredIdSearch = UUID.randomUUID().toString();
@@ -247,7 +232,7 @@ public class BillControllerTests {
     }
 
     @Test
-    @Order(10)
+    @Order(9)
     @DisplayName("Bill Controller: When Find Bill By Title Then Return BillDTO")
     public void billController_WhenFindBillByTitleThatExists_ThenReturnBillDTO() throws Exception {
         String requiredTitleSearch = "Energia";
@@ -260,7 +245,7 @@ public class BillControllerTests {
     }
 
     @Test
-    @Order(11)
+    @Order(10)
     @DisplayName("Bill Controller: When Find Bill By Title Then Throws ResourceNotFoundException")
     public void billController_WhenFindBillByTitleThatDoesNotExists_ThenThrowsResourceNotFoundException() throws Exception {
         String requiredTitleSearch = "Energia";
@@ -275,7 +260,7 @@ public class BillControllerTests {
     }
 
     @Test
-    @Order(12)
+    @Order(11)
     @DisplayName("Bill Controller: Update Bill With Valid Data Then returns ok")
     public void billController_UpdateBillWithValidData_ThenReturnsCreated() throws Exception {
         when(billService.updateBill(any(BillDTO.class), anyString())).thenReturn(this.billDTO);
@@ -288,7 +273,7 @@ public class BillControllerTests {
                 .andExpect(jsonPath("$.title", CoreMatchers.is("Energia")))
                 .andExpect(jsonPath("$.owner", CoreMatchers.is("Lucas P")))
                 .andExpect(jsonPath("$.amount", CoreMatchers.is(89.50)))
-                .andExpect(jsonPath("$.category", CoreMatchers.is("Contas")))
+                .andExpect(jsonPath("$.categoryId", CoreMatchers.is("8de274fd-6a14-46be-9816-4552a71f9e16")))
                 .andExpect(jsonPath("$.description", CoreMatchers.is("Pagar a conta de energia")))
                 .andExpect(jsonPath("$.finishAt", CoreMatchers.is(
                 "2991-10-30T00:00:00")))
@@ -297,7 +282,7 @@ public class BillControllerTests {
     }
 
     @Test
-    @Order(13)
+    @Order(12)
     @DisplayName("Bill Controller: Update Bill That does no exist Then Throws ResourceNotFoundException")
     public void billController_WhenUpdateByTitleThatDoesNotExists_ThenThrowsResourceNotFoundException() throws Exception {
 
@@ -316,7 +301,7 @@ public class BillControllerTests {
     }
 
     @Test
-    @Order(14)
+    @Order(13)
     @DisplayName("Bill Controller: Delete Bill With Existing Id Then Delete Successfully")
     public void billController_DeleteBillWithExistingId_ThenDeleteSuccessfully() throws Exception {
 
@@ -337,7 +322,7 @@ public class BillControllerTests {
     }
 
     @Test
-    @Order(15)
+    @Order(14)
     @DisplayName("Bill Controller: Delete Bill With Non Existing Id Then Throws ResourceNotFoundException")
     public void billController_DeleteBillWithNonExistingId_ThenThrowsResourceNotFoundException() throws Exception {
 
