@@ -1,12 +1,12 @@
 package com.lspeixotodev.family_activity_control_api.entity.category;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.lspeixotodev.family_activity_control_api.entity.bill.Bill;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.util.Date;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @Table(name = "category", uniqueConstraints = {@UniqueConstraint(columnNames = "title")})
@@ -22,6 +22,10 @@ public class Category {
     @Column(nullable = false, length = 100)
     private String description;
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private List<Bill> bills;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     @CreationTimestamp
     private Date createdAt;
@@ -33,17 +37,19 @@ public class Category {
     public Category() {
     }
 
-    public Category(String title, String description, Date createdAt, Date updatedAt) {
+    public Category(UUID id, String title, String description, List<Bill> bills, Date createdAt, Date updatedAt) {
+        this.id = id;
         this.title = title;
         this.description = description;
+        this.bills = bills;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
 
-    public Category(UUID id, String title, String description, Date createdAt, Date updatedAt) {
-        this.id = id;
+    public Category(String title, String description, List<Bill> bills, Date createdAt, Date updatedAt) {
         this.title = title;
         this.description = description;
+        this.bills = bills;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
@@ -88,6 +94,14 @@ public class Category {
         this.updatedAt = updatedAt;
     }
 
+    public List<Bill> getBills() {
+        return bills;
+    }
+
+    public void setBills(List<Bill> bills) {
+        this.bills = bills;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -99,5 +113,17 @@ public class Category {
     @Override
     public int hashCode() {
         return Objects.hashCode(id);
+    }
+
+
+    @Override
+    public String toString() {
+        return "Category{" +
+                "id: " + id +
+                ", title: '" + title + '\'' +
+                ", description: '" + description + '\'' +
+                ", createdAt: " + createdAt +
+                ", updatedAt: " + updatedAt +
+                '}';
     }
 }

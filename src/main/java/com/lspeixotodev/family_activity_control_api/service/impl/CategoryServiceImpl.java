@@ -117,4 +117,8 @@ public class CategoryServiceImpl implements CategoryService {
         return existingCategory;
     }
 
+    public Category categoryDTOToCategory(CategoryDTO categoryDTO) {
+        return this.categoryMapper.dtoToEntity(categoryDTO);
+    }
+
 }

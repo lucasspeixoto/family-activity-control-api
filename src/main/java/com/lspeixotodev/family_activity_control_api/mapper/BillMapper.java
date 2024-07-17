@@ -18,11 +18,13 @@ public interface BillMapper {
     BillMapper INSTANCE = Mappers.getMapper(BillMapper.class);
 
     @Mapping(target = "id", expression = "java(entity.getId() != null ? entity.getId().toString() : null)")
+    @Mapping(target = "categoryId", expression = "java(entity.getCategory() != null ? entity.getCategory().getId().toString() : null)")
     BillDTO entityToDto(Bill entity);
 
     @Mapping(target = "id", expression = "java(dto.getId() != null ? java.util.UUID.fromString(dto.getId()) : null)")
     Bill dtoToEntity(BillDTO dto);
 
+    @Mapping(target = "categoryId", expression = "java(entity.getCategory() != null ? entity.getCategory().getId().toString() : null)")
     List<BillDTO> entitiesToBillDtos(List<Bill> entities);
 
 }

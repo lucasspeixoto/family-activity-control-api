@@ -2,12 +2,12 @@ package com.lspeixotodev.family_activity_control_api.service;
 
 import com.lspeixotodev.family_activity_control_api.__mocks__.MockBill;
 import com.lspeixotodev.family_activity_control_api.dto.bill.BillDTO;
-
 import com.lspeixotodev.family_activity_control_api.entity.bill.Bill;
 import com.lspeixotodev.family_activity_control_api.infra.exceptions.ResourceNotFoundException;
 import com.lspeixotodev.family_activity_control_api.mapper.BillMapper;
 import com.lspeixotodev.family_activity_control_api.repository.BillRepository;
 import com.lspeixotodev.family_activity_control_api.service.impl.BillServiceImpl;
+import com.lspeixotodev.family_activity_control_api.service.impl.CategoryServiceImpl;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mapstruct.factory.Mappers;
@@ -34,6 +34,9 @@ public class BillServiceTests {
     @Mock
     private BillRepository billRepository;
 
+    @Mock
+    private CategoryServiceImpl categoryService;
+
     @InjectMocks
     private BillServiceImpl billService;
 
@@ -46,7 +49,6 @@ public class BillServiceTests {
 
     @InjectMocks
     public MockBill mockBill;
-
 
     @BeforeEach
     public void config() throws ParseException {
@@ -67,7 +69,7 @@ public class BillServiceTests {
         assertThat(billDTO).isNotNull();
         assertThat(billDTO.getTitle()).isEqualTo(mappedCreateBillFromBill.getTitle());
         assertThat(billDTO.getOwner()).isEqualTo(mappedCreateBillFromBill.getOwner());
-        assertThat(billDTO.getCategory()).isEqualTo(mappedCreateBillFromBill.getCategory());
+        assertThat(billDTO.getCategoryId()).isEqualTo(mappedCreateBillFromBill.getCategoryId());
         assertThat(billDTO.getAmount()).isEqualTo(mappedCreateBillFromBill.getAmount());
         assertThat(billDTO.getDescription()).isEqualTo(mappedCreateBillFromBill.getDescription());
         assertThat(billDTO.getFinishAt()).isEqualTo(mappedCreateBillFromBill.getFinishAt());
