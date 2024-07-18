@@ -7,6 +7,7 @@
 
 [Family Activity Control](https://github.com/lucasspeixoto/family-activity-control-api) é o projeto de
 backend da futura plataforma #FamilyActivityControl
+
 ## ✨ Tecnologias
 
 O projeto foi desenvolvido com as seguintes tecnologias:
@@ -25,12 +26,31 @@ O projeto foi desenvolvido com as seguintes tecnologias:
 ## 🚀 Instalação
 
 ```bash
-# Clone o repositório e entre na pasta do projeto
-$ git clone https://github.com/lucasspeixoto/family-activity-control-api && cd family-activity-control-api
+# Clone o repositório
+$ git clone https://github.com/lucasspeixoto/family-activity-control-api
+
+# Entre na pasta do projeto
+$ cd family-activity-control-api
 
 # Execute a aplicação
 $ mvn spring-boot:run
 ```
+
+## 🚢 Iniciar em container Docker
+
+```bash
+# Clone o repositório
+$ git clone https://github.com/lucasspeixoto/family-activity-control-api
+
+# Entre na pasta do projeto
+$ cd family-activity-control-api
+
+# Execute a aplicação em uma máquina com docker
+$ docker-compose up --build
+
+# O servidor iniciará na porta 6060
+```
+
 
 ## 📝 Licença
 

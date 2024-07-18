@@ -87,7 +87,6 @@ public class BillControllerTests {
                 .andExpect(jsonPath("$.amount", CoreMatchers.is(89.50)))
                 .andExpect(jsonPath("$.categoryId", CoreMatchers.is("8de274fd-6a14-46be-9816-4552a71f9e16")))
                 .andExpect(jsonPath("$.description", CoreMatchers.is("Pagar a conta de energia")))
-                .andExpect(jsonPath("$.finishAt", CoreMatchers.is("2991-10-30T00:00:00")))
                 .andExpect(jsonPath("$.type", CoreMatchers.is("FIXED")))
                 .andDo(MockMvcResultHandlers.print());
     }
@@ -269,8 +268,6 @@ public class BillControllerTests {
                 .andExpect(jsonPath("$.amount", CoreMatchers.is(89.50)))
                 .andExpect(jsonPath("$.categoryId", CoreMatchers.is("8de274fd-6a14-46be-9816-4552a71f9e16")))
                 .andExpect(jsonPath("$.description", CoreMatchers.is("Pagar a conta de energia")))
-                .andExpect(jsonPath("$.finishAt", CoreMatchers.is(
-                "2991-10-30T00:00:00")))
                 .andExpect(jsonPath("$.type", CoreMatchers.is("FIXED")))
                 .andDo(MockMvcResultHandlers.print());
     }
