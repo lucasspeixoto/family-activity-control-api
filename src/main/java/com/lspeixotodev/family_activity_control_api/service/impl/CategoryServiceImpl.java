@@ -14,6 +14,7 @@ import com.lspeixotodev.family_activity_control_api.service.CategoryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -99,7 +100,13 @@ public class CategoryServiceImpl implements CategoryService {
 
         Category existingCategory = optionalCategory.get();
 
-        categoryRepository.deleteById(existingCategory.getId());
+        try {
+            categoryRepository.deleteById(existingCategory.getId());
+        } catch (DataIntegrityViolationException e) {
+            throw new DataIntegrityViolationException(
+                    "This category can not be deleted because is used in one or more bill(s)."
+            );
+        }
 
         return this.categoryMapper.entityToDTO(existingCategory);
     }
