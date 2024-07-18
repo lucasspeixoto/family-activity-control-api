@@ -5,7 +5,6 @@ import com.lspeixotodev.family_activity_control_api.dto.category.CategoryDTO;
 import com.lspeixotodev.family_activity_control_api.dto.category.CategoryUsageDTO;
 import com.lspeixotodev.family_activity_control_api.entity.category.Category;
 import com.lspeixotodev.family_activity_control_api.infra.exceptions.ResourceNotFoundException;
-
 import com.lspeixotodev.family_activity_control_api.mapper.CategoryMapper;
 import com.lspeixotodev.family_activity_control_api.repository.CategoryRepository;
 import com.lspeixotodev.family_activity_control_api.service.impl.CategoryServiceImpl;
@@ -45,8 +44,6 @@ public class CategoryServiceTests {
 
     private CategoryDTO categoryDTO;
 
-    private CategoryUsageDTO categoryUsageDTO;
-
     @InjectMocks
     public MockCategory mockCategory;
 
@@ -55,7 +52,6 @@ public class CategoryServiceTests {
     public void config() throws ParseException {
         this.category = mockCategory.getCategory();
         this.categoryDTO = mockCategory.getCategoryDTO();
-        this.categoryUsageDTO = mockCategory.getCategoryUsageDTO();
     }
 
     @Test

@@ -9,5 +9,4 @@ public class FamilyActivityControlApiApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(FamilyActivityControlApiApplication.class, args);
 	}
-
 }

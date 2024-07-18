@@ -1,6 +1,5 @@
 package com.lspeixotodev.family_activity_control_api.config;
 
-import com.lspeixotodev.family_activity_control_api.util.converters.ToCapitalizeCaseConverter;
 import com.lspeixotodev.family_activity_control_api.util.converters.YamlJackson2HttpMessageConverter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
@@ -27,7 +26,6 @@ public class WebConfig implements WebMvcConfigurer {
     public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
         converters.add(new YamlJackson2HttpMessageConverter());
     }
-
 
 
     @Override

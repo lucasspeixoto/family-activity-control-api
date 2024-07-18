@@ -2,10 +2,8 @@ package com.lspeixotodev.family_activity_control_api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lspeixotodev.family_activity_control_api.__mocks__.MockBill;
-import com.lspeixotodev.family_activity_control_api.__mocks__.MockCategory;
 import com.lspeixotodev.family_activity_control_api.controller.impl.BillControllerImpl;
 import com.lspeixotodev.family_activity_control_api.dto.bill.BillDTO;
-import com.lspeixotodev.family_activity_control_api.dto.category.CategoryDTO;
 import com.lspeixotodev.family_activity_control_api.entity.bill.Bill;
 import com.lspeixotodev.family_activity_control_api.infra.exceptions.ResourceNotFoundException;
 import com.lspeixotodev.family_activity_control_api.repository.BillRepository;
@@ -59,9 +57,6 @@ public class BillControllerTests {
     @InjectMocks
     public MockBill mockBill;
 
-    @InjectMocks
-    public MockCategory mockCategory;
-
     @Autowired
     private ObjectMapper objectMapper;
 
@@ -95,7 +90,6 @@ public class BillControllerTests {
                 .andExpect(jsonPath("$.finishAt", CoreMatchers.is("2991-10-30T00:00:00")))
                 .andExpect(jsonPath("$.type", CoreMatchers.is("FIXED")))
                 .andDo(MockMvcResultHandlers.print());
-
     }
 
     @Test

@@ -2,7 +2,6 @@ package com.lspeixotodev.family_activity_control_api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lspeixotodev.family_activity_control_api.__mocks__.MockCategory;
-import com.lspeixotodev.family_activity_control_api.controller.impl.CategoryControllerImpl;
 import com.lspeixotodev.family_activity_control_api.dto.category.CategoryDTO;
 import com.lspeixotodev.family_activity_control_api.dto.category.CategoryUsageDTO;
 import com.lspeixotodev.family_activity_control_api.infra.exceptions.ResourceNotFoundException;
@@ -54,7 +53,6 @@ public class CategoryControllerTests {
 
     private CategoryDTO categoryDTO;
 
-    
     private CategoryUsageDTO categoryUsageDTO;
 
 

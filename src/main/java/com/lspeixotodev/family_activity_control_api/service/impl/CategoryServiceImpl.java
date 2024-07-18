@@ -103,6 +103,7 @@ public class CategoryServiceImpl implements CategoryService {
         try {
             categoryRepository.deleteById(existingCategory.getId());
         } catch (DataIntegrityViolationException e) {
+            logger.info("This category can not be deleted because is used in one or more bill(s).");
             throw new DataIntegrityViolationException(
                     "This category can not be deleted because is used in one or more bill(s)."
             );

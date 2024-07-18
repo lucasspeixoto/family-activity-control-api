@@ -135,6 +135,7 @@ public class BillServiceImpl implements BillService {
     @Override
     public List<BillDTO> findBillByTitle(String title) {
         logger.info("Start find a bill by title at: {}", LocalDateTime.now());
+
         List<Bill> bills = billRepository.findByTitleContainingIgnoreCase(title);
 
         if (bills.isEmpty()) {
