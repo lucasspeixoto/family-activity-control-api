@@ -1,6 +1,7 @@
 package com.lspeixotodev.family_activity_control_api.entity.bill;
 
 import com.lspeixotodev.family_activity_control_api.entity.category.Category;
+import com.lspeixotodev.family_activity_control_api.jacoco.ExcludeFromJacocoGeneratedReport;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -51,6 +52,7 @@ public class Bill {
     public Bill() {
     }
 
+    @ExcludeFromJacocoGeneratedReport
     public Bill(UUID id, String title, String owner, BigDecimal amount, Category category, String description, Date finishAt, Date createdAt, Date updatedAt, BillType type) {
         this.id = id;
         this.title = title;
@@ -64,6 +66,7 @@ public class Bill {
         this.type = type;
     }
 
+    @ExcludeFromJacocoGeneratedReport
     public Bill(String title, String owner, BigDecimal amount, Category category, String description, Date finishAt, Date createdAt, Date updatedAt, BillType type) {
         this.title = title;
         this.owner = owner;
@@ -76,6 +79,7 @@ public class Bill {
         this.type = type;
     }
 
+    @ExcludeFromJacocoGeneratedReport
     private Bill(Bill bill) {
         this.id = bill.id;
         this.title = bill.title;
@@ -170,6 +174,7 @@ public class Bill {
     }
 
     @Override
+    @ExcludeFromJacocoGeneratedReport
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -178,11 +183,13 @@ public class Bill {
     }
 
     @Override
+    @ExcludeFromJacocoGeneratedReport
     public int hashCode() {
         return Objects.hashCode(id);
     }
 
     @Override
+    @ExcludeFromJacocoGeneratedReport
     public String toString() {
         return "Bill {" +
                 "id: " + id +

@@ -1,12 +1,13 @@
 package com.lspeixotodev.family_activity_control_api.infra.exceptions;
 
+import com.lspeixotodev.family_activity_control_api.jacoco.ExcludeFromJacocoGeneratedReport;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.io.Serial;
 
-
 @ResponseStatus(value = HttpStatus.FORBIDDEN)
+@ExcludeFromJacocoGeneratedReport
 public class ResourceAlreadyExistsException extends RuntimeException {
 
     @Serial

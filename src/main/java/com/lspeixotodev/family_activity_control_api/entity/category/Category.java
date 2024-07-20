@@ -2,6 +2,7 @@ package com.lspeixotodev.family_activity_control_api.entity.category;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.lspeixotodev.family_activity_control_api.entity.bill.Bill;
+import com.lspeixotodev.family_activity_control_api.jacoco.ExcludeFromJacocoGeneratedReport;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -37,6 +38,7 @@ public class Category {
     public Category() {
     }
 
+    @ExcludeFromJacocoGeneratedReport
     public Category(UUID id, String title, String description, List<Bill> bills, Date createdAt, Date updatedAt) {
         this.id = id;
         this.title = title;
@@ -46,6 +48,7 @@ public class Category {
         this.updatedAt = updatedAt;
     }
 
+    @ExcludeFromJacocoGeneratedReport
     public Category(String title, String description, List<Bill> bills, Date createdAt, Date updatedAt) {
         this.title = title;
         this.description = description;
@@ -103,6 +106,7 @@ public class Category {
     }
 
     @Override
+    @ExcludeFromJacocoGeneratedReport
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -111,12 +115,14 @@ public class Category {
     }
 
     @Override
+    @ExcludeFromJacocoGeneratedReport
     public int hashCode() {
         return Objects.hashCode(id);
     }
 
 
     @Override
+    @ExcludeFromJacocoGeneratedReport
     public String toString() {
         return "Category{" +
                 "id: " + id +

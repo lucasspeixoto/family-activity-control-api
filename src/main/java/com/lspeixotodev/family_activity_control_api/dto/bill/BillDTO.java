@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.lspeixotodev.family_activity_control_api.entity.bill.BillType;
 import com.lspeixotodev.family_activity_control_api.infra.validation.ValidationGroups.Create;
 import com.lspeixotodev.family_activity_control_api.infra.validation.annotations.UniqueBillTitle;
+import com.lspeixotodev.family_activity_control_api.jacoco.ExcludeFromJacocoGeneratedReport;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotEmpty;
@@ -52,32 +53,8 @@ public class BillDTO {
     @Enumerated(EnumType.STRING)
     private BillType type = BillType.VARIABLE;
 
+    @ExcludeFromJacocoGeneratedReport
     public BillDTO() {
-    }
-
-    public BillDTO(String id, String title, String owner, BigDecimal amount, String categoryId, String description, Date finishAt, Date createdAt, Date updatedAt, BillType type) {
-        this.id = id;
-        this.title = title;
-        this.owner = owner;
-        this.amount = amount;
-        this.categoryId = categoryId;
-        this.description = description;
-        this.finishAt = finishAt;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-        this.type = type;
-    }
-
-    public BillDTO(String title, String owner, BigDecimal amount, String categoryId, String description, Date finishAt, Date createdAt, Date updatedAt, BillType type) {
-        this.title = title;
-        this.owner = owner;
-        this.amount = amount;
-        this.categoryId = categoryId;
-        this.description = description;
-        this.finishAt = finishAt;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-        this.type = type;
     }
 
     public String getId() {
@@ -161,6 +138,7 @@ public class BillDTO {
     }
 
     @Override
+    @ExcludeFromJacocoGeneratedReport
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -169,6 +147,7 @@ public class BillDTO {
     }
 
     @Override
+    @ExcludeFromJacocoGeneratedReport
     public int hashCode() {
         return Objects.hashCode(id);
     }
