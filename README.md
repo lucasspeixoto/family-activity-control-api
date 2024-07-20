@@ -51,6 +51,20 @@ $ docker-compose up --build
 # O servidor iniciará na porta 6060
 ```
 
+## 🦾 Testing
+
+```bash
+# Rodar os testes
+$ mvn clean test
+
+# Rodar os testes e gerar cobertura do jacoco
+$ mvn clean test jacoco:report
+
+# Varredura com pitest
+$ mvn test-compile org.pitest:pitest-maven:mutationCoverage
+
+```
+
 
 ## 📝 Licença
 

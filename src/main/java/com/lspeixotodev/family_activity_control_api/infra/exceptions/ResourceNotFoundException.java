@@ -1,6 +1,6 @@
 package com.lspeixotodev.family_activity_control_api.infra.exceptions;
 
-
+import com.lspeixotodev.family_activity_control_api.jacoco.ExcludeFromJacocoGeneratedReport;
 import com.lspeixotodev.family_activity_control_api.util.constants.Messages;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import java.io.Serial;
 
 @ResponseStatus(value = HttpStatus.NOT_FOUND)
+@ExcludeFromJacocoGeneratedReport
 public class ResourceNotFoundException extends RuntimeException {
 
     @Serial

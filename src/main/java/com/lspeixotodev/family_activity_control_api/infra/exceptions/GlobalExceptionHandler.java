@@ -1,6 +1,7 @@
 package com.lspeixotodev.family_activity_control_api.infra.exceptions;
 
 import com.lspeixotodev.family_activity_control_api.dto.ErrorDetail;
+import com.lspeixotodev.family_activity_control_api.jacoco.ExcludeFromJacocoGeneratedReport;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.*;
 import org.springframework.validation.FieldError;
@@ -10,12 +11,12 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @RestControllerAdvice
+@ExcludeFromJacocoGeneratedReport
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler({ResourceNotFoundException.class})
     public ResponseEntity<ErrorDetail> handleResourceNotFoundException(

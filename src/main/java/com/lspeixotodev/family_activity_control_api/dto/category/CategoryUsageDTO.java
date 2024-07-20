@@ -1,5 +1,9 @@
 package com.lspeixotodev.family_activity_control_api.dto.category;
 
+import com.lspeixotodev.family_activity_control_api.jacoco.ExcludeFromJacocoGeneratedReport;
+
+import java.util.Objects;
+
 public class CategoryUsageDTO {
 
     private String value;
@@ -30,6 +34,22 @@ public class CategoryUsageDTO {
     }
 
     @Override
+    @ExcludeFromJacocoGeneratedReport
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CategoryUsageDTO that = (CategoryUsageDTO) o;
+        return Objects.equals(value, that.value) && Objects.equals(viewValue, that.viewValue);
+    }
+
+    @Override
+    @ExcludeFromJacocoGeneratedReport
+    public int hashCode() {
+        return Objects.hash(value, viewValue);
+    }
+
+    @Override
+    @ExcludeFromJacocoGeneratedReport
     public String toString() {
         return "CategoryUsageDTO {" +
                 "value: '" + value + '\'' +

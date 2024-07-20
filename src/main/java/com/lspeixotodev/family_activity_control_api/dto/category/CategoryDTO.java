@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.lspeixotodev.family_activity_control_api.infra.validation.ValidationGroups.Create;
 import com.lspeixotodev.family_activity_control_api.infra.validation.annotations.UniqueCategoryTitle;
+import com.lspeixotodev.family_activity_control_api.jacoco.ExcludeFromJacocoGeneratedReport;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 
@@ -32,9 +33,11 @@ public class CategoryDTO {
     @JsonIgnore
     private Date updatedAt;
 
+    @ExcludeFromJacocoGeneratedReport
     public CategoryDTO() {
     }
 
+    @ExcludeFromJacocoGeneratedReport
     public CategoryDTO(String title, String description, Date createdAt, Date updatedAt) {
         this.title = title;
         this.description = description;
@@ -42,6 +45,7 @@ public class CategoryDTO {
         this.updatedAt = updatedAt;
     }
 
+    @ExcludeFromJacocoGeneratedReport
     public CategoryDTO(String id, String title, String description, Date createdAt, Date updatedAt) {
         this.id = id;
         this.title = title;
@@ -91,6 +95,7 @@ public class CategoryDTO {
     }
 
     @Override
+    @ExcludeFromJacocoGeneratedReport
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -99,6 +104,7 @@ public class CategoryDTO {
     }
 
     @Override
+    @ExcludeFromJacocoGeneratedReport
     public int hashCode() {
         return Objects.hashCode(id);
     }
