@@ -28,7 +28,6 @@ public class BillServiceImpl implements BillService {
     @Autowired
     private BillRepository billRepository;
 
-
     @Autowired
     private CategoryRepository categoryRepository;
 

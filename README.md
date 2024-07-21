@@ -51,7 +51,7 @@ $ docker-compose up --build
 # O servidor iniciará na porta 6060
 ```
 
-## 🦾 Testing
+## 🧪 Testing
 
 ```bash
 # Rodar os testes

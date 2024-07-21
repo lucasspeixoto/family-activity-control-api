@@ -6,7 +6,7 @@ services:
     restart: unless-stopped
     container_name: family-activity-control-db
     hostname: db-postgresql
-    env_file: ./.env
+    env_file: .env
     environment:
       - POSTGRES_USER=$POSTGRESDB_USER
       - POSTGRES_PASSWORD=$POSTGRESDB_ROOT_PASSWORD

@@ -7,6 +7,7 @@ import com.lspeixotodev.family_activity_control_api.service.impl.CategoryService
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,6 +30,7 @@ public class CategoryControllerImpl implements CategoryController {
     }
 
     @Override
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<List<CategoryDTO>> getAllCategories() {
         return new ResponseEntity<>(this.categoryService.getAllCategories(), HttpStatus.OK);
     }

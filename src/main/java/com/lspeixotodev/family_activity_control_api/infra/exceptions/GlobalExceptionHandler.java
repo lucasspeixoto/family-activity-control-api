@@ -4,6 +4,8 @@ import com.lspeixotodev.family_activity_control_api.dto.ErrorDetail;
 import com.lspeixotodev.family_activity_control_api.jacoco.ExcludeFromJacocoGeneratedReport;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.*;
+import org.springframework.security.authorization.AuthorizationDeniedException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -139,6 +141,50 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(errorDetails);
     }
+
+    @ExceptionHandler({PlatformException.class})
+    public ResponseEntity<ErrorDetail> handlePlatformExceptionException(
+            PlatformException exception,
+            WebRequest webRequest
+    ) {
+
+        HttpStatus status = exception.getStatus();
+
+        ErrorDetail errorDetails = new ErrorDetail(
+                LocalDateTime.now(),
+                exception.getMessage(),
+                webRequest.getDescription(false),
+                status.value()
+        );
+
+        return ResponseEntity
+                .status(status)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(errorDetails);
+    }
+
+    // Resource https://www.baeldung.com/spring-security-exceptionhandler
+    @ExceptionHandler({AuthenticationException.class, AuthorizationDeniedException.class})
+    public ResponseEntity<ErrorDetail> handleAuthenticationException(
+            AuthenticationException exception,
+            WebRequest webRequest
+    ) {
+
+        HttpStatus status = HttpStatus.UNAUTHORIZED;
+
+        ErrorDetail errorDetail = new ErrorDetail(
+                LocalDateTime.now(),
+                "Authentication failed!",
+                "Access expired or request not permitted",
+                status.value()
+        );
+
+        return ResponseEntity
+                .status(status)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(errorDetail);
+    }
+
 
     @ExceptionHandler({Exception.class})
     public ResponseEntity<ErrorDetail> handleGeneralException(
