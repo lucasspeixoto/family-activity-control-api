@@ -5,6 +5,11 @@ cors:
   max-age: 3600
   allowed-headers: "Requestor-Type"
   exposed-headers: "X-Get-Header"
+security:
+  jwt:
+    token:
+      secret-key: daf66e01593f61a15b857cf433aae03a005812b31234e149036bcc8dee755dbb
+      expire-length: 3600000
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
