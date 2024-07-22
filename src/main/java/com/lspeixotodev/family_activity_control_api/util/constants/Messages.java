@@ -11,5 +11,7 @@ public class Messages {
     public static final String REGISTER_SUCCESS_MESSAGE = "User registered successfully!";
     public static final String REGISTER_SUCCESS_DETAIL = "Welcome to Family Activity Control platform!";
 
+    public static final String PERMISSION_NOT_FOUND = "user permissions not found!";
+
 
 }
