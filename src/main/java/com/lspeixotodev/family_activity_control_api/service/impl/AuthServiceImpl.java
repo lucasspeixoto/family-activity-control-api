@@ -2,8 +2,8 @@ package com.lspeixotodev.family_activity_control_api.service.impl;
 
 import com.lspeixotodev.family_activity_control_api.dto.authentication.LoginDTO;
 import com.lspeixotodev.family_activity_control_api.dto.authentication.RegisterDTO;
-import com.lspeixotodev.family_activity_control_api.dto.response.JWTAuthResponse;
-import com.lspeixotodev.family_activity_control_api.dto.response.SuccessRegisterResponse;
+import com.lspeixotodev.family_activity_control_api.dto.authentication.JWTAuthResponse;
+import com.lspeixotodev.family_activity_control_api.dto.authentication.UserRegisteredResponse;
 import com.lspeixotodev.family_activity_control_api.entity.authentication.Role;
 import com.lspeixotodev.family_activity_control_api.entity.authentication.User;
 import com.lspeixotodev.family_activity_control_api.infra.exceptions.PlatformException;
@@ -20,11 +20,9 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -59,17 +57,17 @@ public class AuthServiceImpl implements AuthService {
         }
 
         this.userRepository.findByUsernameOrEmail(username, username)
-                .orElseThrow(() -> new UsernameNotFoundException(
-                        "Usuário " + username + " não encontrado!")
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "User ", "user", username)
                 );
 
         Authentication authentication = authenticationManager
                 .authenticate(
                         new UsernamePasswordAuthenticationToken(
                                 username,
-                                password));
-
-        //System.out.println(authentication.getName());
+                                password
+                        )
+                );
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
@@ -90,14 +88,12 @@ public class AuthServiceImpl implements AuthService {
         return tokenResponse;
     }
 
-    public SuccessRegisterResponse register(@Valid RegisterDTO registerVO) {
+    public UserRegisteredResponse register(@Valid RegisterDTO registerVO) {
 
-        // Check if this user already exists
         if (userRepository.existsByUsername(registerVO.getUsername())) {
             throw new PlatformException(HttpStatus.FORBIDDEN, Messages.REGISTER_ALREADY_EXISTS_USERNAME_MESSAGE);
         }
 
-        // Check if this user email already exists
         if (userRepository.existsByEmail(registerVO.getEmail())) {
             throw new PlatformException(HttpStatus.FORBIDDEN, Messages.REGISTER_ALREADY_EXISTS_EMAIL_MESSAGE);
         }
@@ -119,17 +115,13 @@ public class AuthServiceImpl implements AuthService {
 
             this.userRepository.save(user);
 
-            HttpStatus status = HttpStatus.CREATED;
-
-            return new SuccessRegisterResponse(
-                    status.value(),
+            return new UserRegisteredResponse(
                     Messages.REGISTER_SUCCESS_MESSAGE,
-                    Instant.now(),
                     Messages.REGISTER_SUCCESS_DETAIL
             );
 
         } else {
-            throw new PlatformException(HttpStatus.NOT_FOUND, "User permissions not found!");
+            throw new PlatformException(HttpStatus.CREATED, Messages.PERMISSION_NOT_FOUND);
         }
     }
 

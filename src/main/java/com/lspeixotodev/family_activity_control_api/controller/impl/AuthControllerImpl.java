@@ -3,18 +3,20 @@ package com.lspeixotodev.family_activity_control_api.controller.impl;
 import com.lspeixotodev.family_activity_control_api.controller.AuthController;
 import com.lspeixotodev.family_activity_control_api.dto.authentication.LoginDTO;
 import com.lspeixotodev.family_activity_control_api.dto.authentication.RegisterDTO;
-import com.lspeixotodev.family_activity_control_api.dto.response.JWTAuthResponse;
-import com.lspeixotodev.family_activity_control_api.dto.response.SuccessRegisterResponse;
+import com.lspeixotodev.family_activity_control_api.dto.authentication.JWTAuthResponse;
+import com.lspeixotodev.family_activity_control_api.dto.authentication.UserRegisteredResponse;
 import com.lspeixotodev.family_activity_control_api.service.impl.AuthServiceImpl;
 import com.lspeixotodev.family_activity_control_api.util.constants.MediaType;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+@Validated
 @RestController
-@RequestMapping(value = "/auth", produces = MediaType.APPLICATION_JSON)
+@RequestMapping(value = "/api/v1/auth", produces = MediaType.APPLICATION_JSON)
 public class AuthControllerImpl implements AuthController {
 
     @Autowired
@@ -26,7 +28,7 @@ public class AuthControllerImpl implements AuthController {
     }
 
     @Override
-    public ResponseEntity<SuccessRegisterResponse> register(@Valid @RequestBody RegisterDTO registerDTO) {
+    public ResponseEntity<UserRegisteredResponse> register(@Valid @RequestBody RegisterDTO registerDTO) {
         return new ResponseEntity<>(authService.register(registerDTO), HttpStatus.CREATED);
     }
 

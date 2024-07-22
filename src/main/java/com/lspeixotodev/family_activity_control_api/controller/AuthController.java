@@ -2,8 +2,8 @@ package com.lspeixotodev.family_activity_control_api.controller;
 
 import com.lspeixotodev.family_activity_control_api.dto.authentication.LoginDTO;
 import com.lspeixotodev.family_activity_control_api.dto.authentication.RegisterDTO;
-import com.lspeixotodev.family_activity_control_api.dto.response.JWTAuthResponse;
-import com.lspeixotodev.family_activity_control_api.dto.response.SuccessRegisterResponse;
+import com.lspeixotodev.family_activity_control_api.dto.authentication.JWTAuthResponse;
+import com.lspeixotodev.family_activity_control_api.dto.authentication.UserRegisteredResponse;
 import com.lspeixotodev.family_activity_control_api.util.constants.MediaType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -98,7 +98,7 @@ public interface AuthController {
                     )
             }
     )
-    ResponseEntity<SuccessRegisterResponse> register(@Valid @RequestBody RegisterDTO registerDTO);
+    ResponseEntity<UserRegisteredResponse> register(@Valid @RequestBody RegisterDTO registerDTO);
 
     @PutMapping(value = "/refresh/{username}")
     @Operation(
