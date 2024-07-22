@@ -1,16 +1,14 @@
 package com.lspeixotodev.family_activity_control_api.security.jwt;
 
-import com.lspeixotodev.family_activity_control_api.dto.response.JWTAuthResponse;
+import com.lspeixotodev.family_activity_control_api.dto.authentication.JWTAuthResponse;
 import com.lspeixotodev.family_activity_control_api.infra.exceptions.InvalidJwtAuthenticationException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.io.Encoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
-import java.security.Key;
 import java.util.Date;
 
 @Service
@@ -43,7 +41,7 @@ public class JwtTokenProvider {
                 .issuedAt(currentDate)
                 .expiration(expireDate)
                 .and()
-                .signWith(key())
+                .signWith(getSecretKey())
                 .compact();
     }
 
@@ -57,14 +55,14 @@ public class JwtTokenProvider {
                 .issuedAt(currentDate)
                 .expiration(expireDate)
                 .and()
-                .signWith(key())
+                .signWith(getSecretKey())
                 .compact();
     }
 
     public String getUserNameFromJwtToken(String token) {
         return Jwts
                 .parser()
-                .setSigningKey(key())
+                .verifyWith(getSecretKey())
                 .build()
                 .parseSignedClaims(token)
                 .getPayload()
@@ -80,15 +78,13 @@ public class JwtTokenProvider {
         return generateToken(username);
     }
 
-    private Key key() {
-        SecretKey key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
-        String secretString = Encoders.BASE64.encode(key.getEncoded());
+    private SecretKey getSecretKey() {
         return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
     }
 
     public String getUsername(String token) {
         Claims claims = Jwts.parser()
-                .setSigningKey(key())
+                .verifyWith(getSecretKey())
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
@@ -99,24 +95,12 @@ public class JwtTokenProvider {
     public boolean validateToken(String token) {
         try {
             Jwts.parser()
-                    .setSigningKey(key())
+                    .verifyWith(getSecretKey())
                     .build()
                     .parse(token);
             return true;
         } catch (Exception ex) {
             throw new InvalidJwtAuthenticationException("Expired or invalid token!");
         }
-        /*
-        catch (MalformedJwtException ex) {
-            throw new PlatformException(HttpStatus.BAD_REQUEST, "Invalid JWT token");
-        } catch (ExpiredJwtException ex) {
-            throw new PlatformException(HttpStatus.BAD_REQUEST, "Expired JWT token");
-        } catch (UnsupportedJwtException ex) {
-            throw new PlatformException(HttpStatus.BAD_REQUEST, "Unsupported JWT token");
-        } catch (IllegalArgumentException ex) {
-            throw new PlatformException(HttpStatus.BAD_REQUEST, "JWT claims string is empty.");
-        }
-
-         */
     }
 }

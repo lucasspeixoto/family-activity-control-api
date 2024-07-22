@@ -1,4 +1,4 @@
-package com.lspeixotodev.family_activity_control_api.dto.response;
+package com.lspeixotodev.family_activity_control_api.dto.authentication;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -11,10 +11,10 @@ public class JWTAuthResponse {
 
     private Boolean authenticated;
 
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'", timezone="America/Sao_Paulo")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "America/Sao_Paulo")
     private Date created;
 
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'", timezone="America/Sao_Paulo")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "America/Sao_Paulo")
     private Date expiration;
 
     private String accessToken;
