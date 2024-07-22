@@ -2,20 +2,26 @@ package com.lspeixotodev.family_activity_control_api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lspeixotodev.family_activity_control_api.__mocks__.MockCategory;
+import com.lspeixotodev.family_activity_control_api.config.TestConfigs;
+import com.lspeixotodev.family_activity_control_api.dto.authentication.JWTAuthResponse;
+import com.lspeixotodev.family_activity_control_api.dto.authentication.LoginDTO;
 import com.lspeixotodev.family_activity_control_api.dto.category.CategoryDTO;
 import com.lspeixotodev.family_activity_control_api.dto.category.CategoryUsageDTO;
 import com.lspeixotodev.family_activity_control_api.infra.exceptions.ResourceNotFoundException;
+import com.lspeixotodev.family_activity_control_api.integrationtests.AbstractIntegrationTest;
 import com.lspeixotodev.family_activity_control_api.repository.CategoryRepository;
 import com.lspeixotodev.family_activity_control_api.service.impl.CategoryServiceImpl;
 import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
@@ -24,17 +30,24 @@ import java.text.ParseException;
 import java.util.Collections;
 import java.util.UUID;
 
+import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(CategoryController.class)
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest(
+        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
+)
+@AutoConfigureMockMvc
+@ActiveProfiles("it")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @DisplayName("Category Controller (Integration Tests)")
-public class CategoryControllerTests {
+public class CategoryControllerTests extends AbstractIntegrationTest {
+
+    @LocalServerPort
+    int port;
 
     @Autowired
     private MockMvc mvc;
@@ -47,13 +60,15 @@ public class CategoryControllerTests {
 
     @InjectMocks
     public MockCategory mockCategory;
-    
+
     @Autowired
     private ObjectMapper objectMapper;
 
     private CategoryDTO categoryDTO;
 
     private CategoryUsageDTO categoryUsageDTO;
+
+    private static String accessToken;
 
 
     @BeforeEach
@@ -63,13 +78,36 @@ public class CategoryControllerTests {
     }
 
     @Test
+    @Order(0)
+    @DisplayName("Integration Test to Login with Credentials")
+    public void givenAccountCredentials_whenLogin_ThenReturnAuthorizationAccessToken() {
+        LoginDTO user = new LoginDTO("admin", "admin");
+
+        accessToken = given()
+                .basePath("/api/v1/auth/login")
+                .port(this.port)
+                .contentType(TestConfigs.CONTENT_TYPE_JSON)
+                .body(user)
+                .when()
+                .post()
+                .then()
+                .statusCode(200)
+                .extract()
+                .body()
+                .as(JWTAuthResponse.class)
+                .getAccessToken();
+    }
+
+    @Test
     @Order(1)
+    @WithMockUser
     @DisplayName("Category Controller: Create Category With Valid Data Then returns created")
     public void categoryController_CreateCategoryWithValidData_ThenReturnsCreated() throws Exception {
         when(categoryService.create(any(CategoryDTO.class))).thenReturn(this.categoryDTO);
 
         ResultActions response = mvc.perform(post("/api/v1/category/create")
                 .content(objectMapper.writeValueAsString(this.categoryDTO))
+                .header(TestConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer " + accessToken)
                 .contentType(MediaType.APPLICATION_JSON));
 
         response.andExpect(status().isCreated())
@@ -89,6 +127,7 @@ public class CategoryControllerTests {
 
         mvc.perform(post("/api/v1/category/create")
                         .content(objectMapper.writeValueAsString(this.categoryDTO))
+                        .header(TestConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer " + accessToken)
                         .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isUnprocessableEntity())
                 .andExpect(jsonPath("$.message", CoreMatchers.is("The Title must contain at least 3 characters!")))
                 .andDo(MockMvcResultHandlers.print());
@@ -98,6 +137,7 @@ public class CategoryControllerTests {
 
         mvc.perform(post("/api/v1/category/create")
                         .content(objectMapper.writeValueAsString(this.categoryDTO))
+                        .header(TestConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer " + accessToken)
                         .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isUnprocessableEntity())
                 .andExpect(jsonPath("$.message", CoreMatchers.is("The Title is mandatory!")))
                 .andDo(MockMvcResultHandlers.print());
@@ -113,6 +153,7 @@ public class CategoryControllerTests {
 
         mvc.perform(post("/api/v1/category/create")
                         .content(objectMapper.writeValueAsString(this.categoryDTO))
+                        .header(TestConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer " + accessToken)
                         .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isUnprocessableEntity())
                 .andExpect(jsonPath("$.message", CoreMatchers.is("The Description must contain at least 3 characters!")))
                 .andDo(MockMvcResultHandlers.print());
@@ -123,6 +164,7 @@ public class CategoryControllerTests {
 
         mvc.perform(post("/api/v1/category/create")
                         .content(objectMapper.writeValueAsString(this.categoryDTO))
+                        .header(TestConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer " + accessToken)
                         .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isUnprocessableEntity())
                 .andExpect(jsonPath("$.message", CoreMatchers.is("The Title is mandatory!")))
                 .andDo(MockMvcResultHandlers.print());
@@ -135,6 +177,7 @@ public class CategoryControllerTests {
         when(categoryService.getAllCategories()).thenReturn(Collections.singletonList(this.categoryDTO));
 
         mvc.perform(get("/api/v1/category")
+                        .header(TestConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer " + accessToken)
                         .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(jsonPath("$", hasSize(1)));
@@ -147,6 +190,7 @@ public class CategoryControllerTests {
         when(categoryService.getCategoryUsages()).thenReturn(Collections.singletonList(this.categoryUsageDTO));
 
         mvc.perform(get("/api/v1/category/usages")
+                        .header(TestConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer " + accessToken)
                         .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(jsonPath("$", hasSize(1)));
@@ -161,6 +205,7 @@ public class CategoryControllerTests {
         when(categoryService.findCategoryById(requiredIdSearch)).thenReturn(this.categoryDTO);
 
         mvc.perform(get("/api/v1/category/find-by-id/{id}", requiredIdSearch)
+                        .header(TestConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer " + accessToken)
                         .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
                 .andDo(MockMvcResultHandlers.print());
     }
@@ -174,6 +219,7 @@ public class CategoryControllerTests {
         when(categoryService.findCategoryById(anyString())).thenThrow(new ResourceNotFoundException("Category", "id", requiredIdSearch));
 
         mvc.perform(get("/api/v1/category/find-by-id/{id}", requiredIdSearch)
+                        .header(TestConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer " + accessToken)
                         .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.message", CoreMatchers.is("Category not found with id " + requiredIdSearch)))
                 .andDo(MockMvcResultHandlers.print());
@@ -187,6 +233,7 @@ public class CategoryControllerTests {
         when(categoryService.updateCategory(any(CategoryDTO.class), anyString())).thenReturn(this.categoryDTO);
 
         ResultActions response = mvc.perform(put("/api/v1/category/update/{id}", this.categoryDTO.getId())
+                .header(TestConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer " + accessToken)
                 .content(objectMapper.writeValueAsString(this.categoryDTO))
                 .contentType(MediaType.APPLICATION_JSON));
 
@@ -209,6 +256,7 @@ public class CategoryControllerTests {
 
         ResultActions response = mvc.perform(put("/api/v1/category/update/{id}", requiredTitleSearch)
                 .content(objectMapper.writeValueAsString(this.categoryDTO))
+                .header(TestConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer " + accessToken)
                 .contentType(MediaType.APPLICATION_JSON));
 
         response.andExpect(status().isNotFound())
@@ -225,6 +273,7 @@ public class CategoryControllerTests {
 
         ResultActions response = mvc.perform(delete("/api/v1/category/delete/{id}", this.categoryDTO.getId())
                 .content(objectMapper.writeValueAsString(this.categoryDTO))
+                .header(TestConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer " + accessToken)
                 .contentType(MediaType.APPLICATION_JSON));
 
         response.andExpect(status().isOk())
@@ -245,6 +294,7 @@ public class CategoryControllerTests {
 
         ResultActions response = mvc.perform(delete("/api/v1/category/delete/{id}", requiredTitleSearch)
                 .content(objectMapper.writeValueAsString(this.categoryDTO))
+                .header(TestConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer " + accessToken)
                 .contentType(MediaType.APPLICATION_JSON));
 
         response.andExpect(status().isNotFound())

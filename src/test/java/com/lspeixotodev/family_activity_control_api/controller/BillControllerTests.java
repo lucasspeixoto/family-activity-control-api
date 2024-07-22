@@ -2,22 +2,24 @@ package com.lspeixotodev.family_activity_control_api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lspeixotodev.family_activity_control_api.__mocks__.MockBill;
-import com.lspeixotodev.family_activity_control_api.controller.impl.BillControllerImpl;
+import com.lspeixotodev.family_activity_control_api.config.TestConfigs;
+import com.lspeixotodev.family_activity_control_api.dto.authentication.JWTAuthResponse;
+import com.lspeixotodev.family_activity_control_api.dto.authentication.LoginDTO;
 import com.lspeixotodev.family_activity_control_api.dto.bill.BillDTO;
 import com.lspeixotodev.family_activity_control_api.entity.bill.Bill;
 import com.lspeixotodev.family_activity_control_api.infra.exceptions.ResourceNotFoundException;
+import com.lspeixotodev.family_activity_control_api.integrationtests.AbstractIntegrationTest;
 import com.lspeixotodev.family_activity_control_api.repository.BillRepository;
 import com.lspeixotodev.family_activity_control_api.service.impl.BillServiceImpl;
 
 import com.lspeixotodev.family_activity_control_api.service.impl.CategoryServiceImpl;
 import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.extension.ExtendWith;
 
 import org.mockito.InjectMocks;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -26,8 +28,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
@@ -38,11 +41,17 @@ import java.text.ParseException;
 import java.util.Collections;
 import java.util.UUID;
 
-@WebMvcTest(BillControllerImpl.class)
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest(
+        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
+)
+@AutoConfigureMockMvc
+@ActiveProfiles("it")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @DisplayName("Bill Controller (Integration Tests)")
-public class BillControllerTests {
+public class BillControllerTests extends AbstractIntegrationTest {
+
+    @LocalServerPort
+    int port;
 
     @Autowired
     private MockMvc mvc;
@@ -66,11 +75,34 @@ public class BillControllerTests {
 
     private BillDTO billDTO;
 
+    private static String accessToken;
+
 
     @BeforeEach
     public void config() throws ParseException {
         this.bill = mockBill.getBill();
         this.billDTO = mockBill.getBillDTO();
+    }
+
+    @Test
+    @Order(0)
+    @DisplayName("Integration Test to Login with Credentials")
+    public void givenAccountCredentials_whenLogin_ThenReturnAuthorizationAccessToken() {
+        LoginDTO user = new LoginDTO("admin", "admin");
+
+        accessToken = given()
+                .basePath("/api/v1/auth/login")
+                .port(this.port)
+                .contentType(TestConfigs.CONTENT_TYPE_JSON)
+                .body(user)
+                .when()
+                .post()
+                .then()
+                .statusCode(200)
+                .extract()
+                .body()
+                .as(JWTAuthResponse.class)
+                .getAccessToken();
     }
 
     @Test
@@ -81,6 +113,7 @@ public class BillControllerTests {
 
         ResultActions response = mvc.perform(post("/api/v1/bill/create")
                 .content(objectMapper.writeValueAsString(this.billDTO))
+                .header(TestConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer " + accessToken)
                 .contentType(MediaType.APPLICATION_JSON));
 
         response.andExpect(status().isCreated())
@@ -103,6 +136,7 @@ public class BillControllerTests {
 
         mvc.perform(post("/api/v1/bill/create")
                         .content(objectMapper.writeValueAsString(this.billDTO))
+                        .header(TestConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer " + accessToken)
                         .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isUnprocessableEntity())
                 .andExpect(jsonPath("$.message", CoreMatchers.is("The Title must contain at least 3 characters!")))
                 .andDo(MockMvcResultHandlers.print());
@@ -112,6 +146,7 @@ public class BillControllerTests {
 
         mvc.perform(post("/api/v1/bill/create")
                         .content(objectMapper.writeValueAsString(this.billDTO))
+                        .header(TestConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer " + accessToken)
                         .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isUnprocessableEntity())
                 .andExpect(jsonPath("$.message", CoreMatchers.is("The Title is mandatory!")))
                 .andDo(MockMvcResultHandlers.print());
@@ -127,6 +162,7 @@ public class BillControllerTests {
 
         mvc.perform(post("/api/v1/bill/create")
                         .content(objectMapper.writeValueAsString(this.billDTO))
+                        .header(TestConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer " + accessToken)
                         .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isUnprocessableEntity())
                 .andExpect(jsonPath("$.message", CoreMatchers.is("The Owner must contain at least 3 characters!")))
                 .andDo(MockMvcResultHandlers.print());
@@ -136,6 +172,7 @@ public class BillControllerTests {
 
         mvc.perform(post("/api/v1/bill/create")
                         .content(objectMapper.writeValueAsString(this.billDTO))
+                        .header(TestConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer " + accessToken)
                         .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isUnprocessableEntity())
                 .andExpect(jsonPath("$.message", CoreMatchers.is("The Owner is mandatory!")))
                 .andDo(MockMvcResultHandlers.print());
@@ -153,6 +190,7 @@ public class BillControllerTests {
 
         mvc.perform(post("/api/v1/bill/create")
                         .content(objectMapper.writeValueAsString(this.billDTO))
+                        .header(TestConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer " + accessToken)
                         .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isUnprocessableEntity())
                 .andExpect(jsonPath("$.message", CoreMatchers.is("The Description must contain at least 3 characters!")))
                 .andDo(MockMvcResultHandlers.print());
@@ -162,6 +200,7 @@ public class BillControllerTests {
 
         mvc.perform(post("/api/v1/bill/create")
                         .content(objectMapper.writeValueAsString(this.billDTO))
+                        .header(TestConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer " + accessToken)
                         .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isUnprocessableEntity())
                 .andExpect(jsonPath("$.message", CoreMatchers.is("The Description is mandatory!")))
                 .andDo(MockMvcResultHandlers.print());
@@ -178,6 +217,7 @@ public class BillControllerTests {
 
         mvc.perform(post("/api/v1/bill/create")
                         .content(objectMapper.writeValueAsString(this.billDTO))
+                        .header(TestConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer " + accessToken)
                         .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isUnprocessableEntity())
                 .andExpect(jsonPath("$.message", CoreMatchers.is("The Finish At is mandatory!")))
                 .andDo(MockMvcResultHandlers.print());
@@ -191,6 +231,7 @@ public class BillControllerTests {
         when(billService.getAllBills()).thenReturn(Collections.singletonList(this.billDTO));
 
         mvc.perform(get("/api/v1/bill")
+                        .header(TestConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer " + accessToken)
                         .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(jsonPath("$", hasSize(1)));
@@ -206,6 +247,7 @@ public class BillControllerTests {
         when(billService.findBillById(requiredIdSearch)).thenReturn(this.billDTO);
 
         mvc.perform(get("/api/v1/bill/find-by-id/{id}", requiredIdSearch)
+                        .header(TestConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer " + accessToken)
                         .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
                 .andDo(MockMvcResultHandlers.print());
 
@@ -220,6 +262,7 @@ public class BillControllerTests {
         when(billService.findBillById(anyString())).thenThrow(new ResourceNotFoundException("Bill", "id", requiredIdSearch));
 
         mvc.perform(get("/api/v1/bill/find-by-id/{id}", requiredIdSearch)
+                        .header(TestConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer " + accessToken)
                         .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.message", CoreMatchers.is("Bill not found with id " + requiredIdSearch)))
                 .andDo(MockMvcResultHandlers.print());
@@ -234,8 +277,10 @@ public class BillControllerTests {
 
         when(billService.findBillByTitle(requiredTitleSearch)).thenReturn(Collections.singletonList(this.billDTO));
 
-        mvc.perform(get("/api/v1/bill/find-by-title/{title}", requiredTitleSearch)
-                        .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
+        mvc.perform(
+                        get("/api/v1/bill/find-by-title/{title}", requiredTitleSearch)
+                                .header(TestConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer " + accessToken)
+                                .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
                 .andDo(MockMvcResultHandlers.print());
     }
 
@@ -247,8 +292,10 @@ public class BillControllerTests {
 
         when(billService.findBillByTitle(requiredTitleSearch)).thenThrow(new ResourceNotFoundException("Bill", "id", requiredTitleSearch));
 
-        mvc.perform(get("/api/v1/bill/find-by-title/{title}", requiredTitleSearch)
-                        .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isNotFound())
+        mvc.perform(
+                        get("/api/v1/bill/find-by-title/{title}", requiredTitleSearch)
+                                .header(TestConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer " + accessToken)
+                                .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.message", CoreMatchers.is("Bill not found with id " + requiredTitleSearch)))
                 .andDo(MockMvcResultHandlers.print());
 
@@ -260,9 +307,11 @@ public class BillControllerTests {
     public void billController_UpdateBillWithValidData_ThenReturnsCreated() throws Exception {
         when(billService.updateBill(any(BillDTO.class), anyString())).thenReturn(this.billDTO);
 
-        ResultActions response = mvc.perform(put("/api/v1/bill/update/{id}", this.billDTO.getId())
-                .content(objectMapper.writeValueAsString(this.billDTO))
-                .contentType(MediaType.APPLICATION_JSON));
+        ResultActions response = mvc.perform(
+                put("/api/v1/bill/update/{id}", this.billDTO.getId())
+                        .header(TestConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer " + accessToken)
+                        .content(objectMapper.writeValueAsString(this.billDTO))
+                        .contentType(MediaType.APPLICATION_JSON));
 
         response.andExpect(status().isOk())
                 .andExpect(jsonPath("$.title", CoreMatchers.is("Energia")))
@@ -285,6 +334,7 @@ public class BillControllerTests {
                 .thenThrow(new ResourceNotFoundException("Bill", "id", requiredTitleSearch));
 
         ResultActions response = mvc.perform(put("/api/v1/bill/update/{id}", requiredTitleSearch)
+                .header(TestConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer " + accessToken)
                 .content(objectMapper.writeValueAsString(this.billDTO))
                 .contentType(MediaType.APPLICATION_JSON));
 
@@ -303,12 +353,13 @@ public class BillControllerTests {
         when(billService.deleteBill(anyString()))
                 .thenThrow(new ResourceNotFoundException("Bill", "id", requiredIdSearch));
 
-        ResultActions response = mvc.perform(delete(
-                "/api/v1/bill/delete/{id}",
-                requiredIdSearch
-        )
-                .contentType(MediaType.APPLICATION_JSON));
-
+        ResultActions response = mvc.perform(
+                delete(
+                        "/api/v1/bill/delete/{id}",
+                        requiredIdSearch
+                )
+                        .header(TestConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer " + accessToken)
+                        .contentType(MediaType.APPLICATION_JSON));
         response.andExpect(status().isNotFound())
                 .andDo(MockMvcResultHandlers.print());
 
@@ -323,11 +374,13 @@ public class BillControllerTests {
 
         when(billService.deleteBill(anyString())).thenReturn(this.billDTO);
 
-        ResultActions response = mvc.perform(delete(
-                "/api/v1/bill/delete/{id}",
-                requiredIdSearch
-        )
-                .contentType(MediaType.APPLICATION_JSON));
+        ResultActions response = mvc.perform(
+                delete(
+                        "/api/v1/bill/delete/{id}",
+                        requiredIdSearch
+                )
+                        .header(TestConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer " + accessToken)
+                        .contentType(MediaType.APPLICATION_JSON));
 
         response.andExpect(status().isOk())
                 .andDo(MockMvcResultHandlers.print());
