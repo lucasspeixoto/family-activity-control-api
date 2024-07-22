@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 8888
 cors:
   originPatterns: http://localhost:4200,http://localhost:3000,http://localhost:8080
   allowed-origins: http://localhost:4200,http://localhost:3000,http://localhost:8080
