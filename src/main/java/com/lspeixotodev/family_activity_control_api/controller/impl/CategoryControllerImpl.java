@@ -19,6 +19,7 @@ import java.util.List;
 @Validated
 @RestController
 @RequestMapping(value = "/api/v1/category")
+@PreAuthorize("hasRole('ROLE_ADMIN')")
 public class CategoryControllerImpl implements CategoryController {
 
     @Autowired
@@ -30,7 +31,6 @@ public class CategoryControllerImpl implements CategoryController {
     }
 
     @Override
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<List<CategoryDTO>> getAllCategories() {
         return new ResponseEntity<>(this.categoryService.getAllCategories(), HttpStatus.OK);
     }

@@ -1,6 +1,5 @@
 package com.lspeixotodev.family_activity_control_api.repository.authentication;
 
-
 import com.lspeixotodev.family_activity_control_api.entity.authentication.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 

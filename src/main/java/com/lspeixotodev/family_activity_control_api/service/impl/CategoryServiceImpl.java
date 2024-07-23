@@ -1,12 +1,8 @@
 package com.lspeixotodev.family_activity_control_api.service.impl;
 
 import com.lspeixotodev.family_activity_control_api.dto.category.CategoryDTO;
-import com.lspeixotodev.family_activity_control_api.dto.category.CategoryDTO;
-
 import com.lspeixotodev.family_activity_control_api.dto.category.CategoryUsageDTO;
-import com.lspeixotodev.family_activity_control_api.dto.category.CategoryDTO;
 import com.lspeixotodev.family_activity_control_api.entity.category.Category;
-
 import com.lspeixotodev.family_activity_control_api.infra.exceptions.ResourceNotFoundException;
 import com.lspeixotodev.family_activity_control_api.mapper.CategoryMapper;
 import com.lspeixotodev.family_activity_control_api.repository.CategoryRepository;

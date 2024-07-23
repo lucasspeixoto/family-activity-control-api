@@ -14,6 +14,8 @@ import com.lspeixotodev.family_activity_control_api.security.jwt.JwtTokenProvide
 import com.lspeixotodev.family_activity_control_api.service.AuthService;
 import com.lspeixotodev.family_activity_control_api.util.constants.Messages;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -23,14 +25,14 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.logging.Logger;
 
 @Service
 public class AuthServiceImpl implements AuthService {
 
-    private final Logger logger = Logger.getLogger(AuthServiceImpl.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(AuthServiceImpl.class);
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -47,19 +49,15 @@ public class AuthServiceImpl implements AuthService {
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
 
-    public JWTAuthResponse login(@Valid LoginDTO loginVO) {
+    public JWTAuthResponse login(@Valid LoginDTO loginDTO) {
+        logger.info("Start logging user at: {}", LocalDateTime.now());
 
-        String username = loginVO.getUsernameOrEmail();
-        String password = loginVO.getPassword();
+        String username = loginDTO.getUsernameOrEmail();
+        String password = loginDTO.getPassword();
 
-        if (!userRepository.existsByUsername(username)) {
-            throw new PlatformException(HttpStatus.FORBIDDEN, Messages.LOGIN_EMAIL_PASSWORD_MESSAGE);
+        if (this.userRepository.findByUsernameOrEmail(username, username).isEmpty()) {
+            throw new ResourceNotFoundException("User", "user/email", username);
         }
-
-        this.userRepository.findByUsernameOrEmail(username, username)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "User ", "user", username)
-                );
 
         Authentication authentication = authenticationManager
                 .authenticate(
@@ -78,32 +76,31 @@ public class AuthServiceImpl implements AuthService {
 
         var tokenResponse = new JWTAuthResponse();
 
-        this.userRepository.findByUsernameOrEmail(username, username)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "User ", "user", username)
-                );
+        if (this.userRepository.findByUsernameOrEmail(username, username).isEmpty()) {
+            throw new ResourceNotFoundException("User", "user", username);
+        }
 
         tokenResponse = jwtTokenProvider.generateRefreshedToken(refreshToken);
 
         return tokenResponse;
     }
 
-    public UserRegisteredResponse register(@Valid RegisterDTO registerVO) {
+    public UserRegisteredResponse register(@Valid RegisterDTO registerDTO) {
 
-        if (userRepository.existsByUsername(registerVO.getUsername())) {
+        if (userRepository.existsByUsername(registerDTO.getUsername())) {
             throw new PlatformException(HttpStatus.FORBIDDEN, Messages.REGISTER_ALREADY_EXISTS_USERNAME_MESSAGE);
         }
 
-        if (userRepository.existsByEmail(registerVO.getEmail())) {
+        if (userRepository.existsByEmail(registerDTO.getEmail())) {
             throw new PlatformException(HttpStatus.FORBIDDEN, Messages.REGISTER_ALREADY_EXISTS_EMAIL_MESSAGE);
         }
 
         User user = new User();
 
-        user.setName(registerVO.getName());
-        user.setEmail(registerVO.getEmail());
-        user.setUsername(registerVO.getUsername());
-        user.setPassword(passwordEncoder.encode(registerVO.getPassword()));
+        user.setName(registerDTO.getName());
+        user.setEmail(registerDTO.getEmail());
+        user.setUsername(registerDTO.getUsername());
+        user.setPassword(passwordEncoder.encode(registerDTO.getPassword()));
 
         Set<Role> roles = new HashSet<>();
 
@@ -121,7 +118,7 @@ public class AuthServiceImpl implements AuthService {
             );
 
         } else {
-            throw new PlatformException(HttpStatus.CREATED, Messages.PERMISSION_NOT_FOUND);
+            throw new PlatformException(HttpStatus.UNAUTHORIZED, Messages.PERMISSION_NOT_FOUND);
         }
     }
 
