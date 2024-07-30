@@ -85,7 +85,7 @@ public class AuthServiceImpl implements AuthService {
         return tokenResponse;
     }
 
-    public UserRegisteredResponse register(@Valid RegisterDTO registerDTO) {
+    public UserRegisteredResponse register(RegisterDTO registerDTO) {
 
         if (userRepository.existsByUsername(registerDTO.getUsername())) {
             throw new PlatformException(HttpStatus.FORBIDDEN, Messages.REGISTER_ALREADY_EXISTS_USERNAME_MESSAGE);

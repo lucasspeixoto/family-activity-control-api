@@ -28,7 +28,10 @@ public class AuthControllerImpl implements AuthController {
     }
 
     @Override
-    public ResponseEntity<UserRegisteredResponse> register(@Valid @RequestBody RegisterDTO registerDTO) {
+    public ResponseEntity<UserRegisteredResponse> register(
+            @Valid @RequestBody RegisterDTO registerDTO
+
+    ) {
         return new ResponseEntity<>(authService.register(registerDTO), HttpStatus.CREATED);
     }
 

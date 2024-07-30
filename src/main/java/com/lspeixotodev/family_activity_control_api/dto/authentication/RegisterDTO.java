@@ -8,21 +8,22 @@ import java.util.Objects;
 
 public class RegisterDTO {
 
-    @NotEmpty(message = "O nome é obrigatório!")
-    @Size(min = 3, message = "O nome precisa conter pelo menos 3 caracteres!")
+    @NotEmpty(message = "Name is mandatory!")
+    @Size(min = 3, message = "The name must contain at least 3 characters!")
     private String name;
 
-    @NotEmpty(message = "O nome de usuário é obrigatório!")
-    @Size(min = 3, message = "O nome de usuário precisa conter pelo menos 3 caracteres!")
+    @NotEmpty(message = "Username is required!")
+    @Size(min = 3, message = "Username must contain at least 3 characters!")
     private String username;
 
-    @NotEmpty(message = "O E-mail é obrigatório!")
-    @Email(message = "E-mail incorreto!")
+    @NotEmpty(message = "Email is mandatory!")
+    @Email(regexp = "[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,3}", message = "Invalid email")
     private String email;
 
-    @NotEmpty(message = "A senha é obrigatória!")
-    @Size(min = 3, message = "A senha precisa conter no mínimo 3 caracteres!")
+    @NotEmpty(message = "Password is mandatory!")
+    @Size(min = 3, message = "The password must contain at least 3 characters!")
     private String password;
+
 
     public RegisterDTO() {
     }

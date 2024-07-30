@@ -98,12 +98,14 @@ public interface AuthController {
                     )
             }
     )
-    ResponseEntity<UserRegisteredResponse> register(@Valid @RequestBody RegisterDTO registerDTO);
+    ResponseEntity<UserRegisteredResponse> register(
+            @Valid @RequestBody RegisterDTO registerDTO
+    );
 
-    @PutMapping(value = "/refresh/{username}")
+    @GetMapping(value = "/refresh/{username}")
     @Operation(
-            summary = "Register in the app",
-            description = "Service for create a new user",
+            summary = "Refresh token for logged user",
+            description = "Service for get new token from refresh token",
             tags = {"Authentication"},
             responses = {
                     @ApiResponse(
@@ -113,7 +115,7 @@ public interface AuthController {
                                     @Content(
                                             mediaType = "application/json",
                                             array = @ArraySchema(
-                                                    schema = @Schema(implementation = RegisterDTO.class))
+                                                    schema = @Schema(implementation = JWTAuthResponse.class))
                                     )
                             }
                     ),

@@ -1,15 +1,19 @@
 package com.lspeixotodev.family_activity_control_api.service.impl;
 
 import com.lspeixotodev.family_activity_control_api.dto.authentication.UserDTO;
+import com.lspeixotodev.family_activity_control_api.dto.authentication.UserFullDataDTO;
+import com.lspeixotodev.family_activity_control_api.entity.Image;
 import com.lspeixotodev.family_activity_control_api.entity.authentication.User;
 import com.lspeixotodev.family_activity_control_api.infra.exceptions.ResourceNotFoundException;
 import com.lspeixotodev.family_activity_control_api.mapper.authentication.UserMapper;
+import com.lspeixotodev.family_activity_control_api.repository.ImageRepository;
 import com.lspeixotodev.family_activity_control_api.repository.authentication.UserRepository;
 import com.lspeixotodev.family_activity_control_api.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.logging.Logger;
 
@@ -24,6 +28,10 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserMapper userMapper;
 
+    @Autowired
+    private ImageRepository imageRepository;
+
+    @Override
     public UserDTO findByUsernameOrEmail(String username, String email) {
         User user = this.repository.findByUsernameOrEmail(username, email).orElseThrow(
                 () -> new ResourceNotFoundException("User", "email", email)
@@ -32,13 +40,15 @@ public class UserServiceImpl implements UserService {
         return this.userMapper.entityToDto(user);
     }
 
+    @Override
     public List<UserDTO> findAll() {
         List<User> users = this.repository.findAll();
 
         return this.userMapper.entitiesToDtos(users);
     }
 
-    public UserDTO findById(String id) {
+    @Override
+    public UserFullDataDTO findById(String id) {
 
         UUID uuid = UUID.fromString(id);
 
@@ -46,6 +56,12 @@ public class UserServiceImpl implements UserService {
                 () -> new ResourceNotFoundException("User", "id", id)
         );
 
-        return this.userMapper.entityToDto(user);
+        UserFullDataDTO userDTO = this.userMapper.entityToFullDataDto(user);
+
+        Optional<Image> optionalImage = this.imageRepository.findByUserId(UUID.fromString(id));
+
+        optionalImage.ifPresent(image -> userDTO.setProfilePhoto(image.getProfilePhoto()));
+
+        return userDTO;
     }
 }

@@ -2,6 +2,7 @@ package com.lspeixotodev.family_activity_control_api.infra.exceptions;
 
 import com.lspeixotodev.family_activity_control_api.dto.ErrorDetail;
 import com.lspeixotodev.family_activity_control_api.jacoco.ExcludeFromJacocoGeneratedReport;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.*;
 import org.springframework.security.authorization.AuthorizationDeniedException;
@@ -20,6 +21,7 @@ import java.util.List;
 @RestControllerAdvice
 @ExcludeFromJacocoGeneratedReport
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
+
     @ExceptionHandler({ResourceNotFoundException.class})
     public ResponseEntity<ErrorDetail> handleResourceNotFoundException(
             ResourceNotFoundException exception,
@@ -65,20 +67,15 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(
             MethodArgumentNotValidException exception,
-            HttpHeaders headers,
-            HttpStatusCode status,
+            @NotNull HttpHeaders headers,
+            @NotNull HttpStatusCode status,
             WebRequest webRequest
     ) {
-
-        //Map<String, String> errors = new HashMap<>();
 
         List<String> errorMessages = new ArrayList<>();
 
         exception.getBindingResult().getAllErrors().forEach((error) -> {
-            String fieldName = ((FieldError) error).getField();
             String message = error.getDefaultMessage();
-
-            //errors.put(fieldName, message);
 
             errorMessages.add(message);
         });
@@ -164,7 +161,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     // Resource https://www.baeldung.com/spring-security-exceptionhandler
-    @ExceptionHandler({AuthenticationException.class, AuthorizationDeniedException.class})
+    @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<ErrorDetail> handleAuthenticationException(
             AuthenticationException exception,
             WebRequest webRequest
@@ -185,6 +182,26 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 .body(errorDetail);
     }
 
+    @ExceptionHandler(AuthorizationDeniedException.class)
+    public ResponseEntity<ErrorDetail> handleAuthorizationDeniedException(
+            AuthorizationDeniedException exception,
+            WebRequest webRequest
+    ) {
+
+        HttpStatus status = HttpStatus.UNAUTHORIZED;
+
+        ErrorDetail errorDetail = new ErrorDetail(
+                LocalDateTime.now(),
+                "Authentication failed!",
+                "Access expired or request not permitted",
+                status.value()
+        );
+
+        return ResponseEntity
+                .status(status)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(errorDetail);
+    }
 
     @ExceptionHandler({Exception.class})
     public ResponseEntity<ErrorDetail> handleGeneralException(

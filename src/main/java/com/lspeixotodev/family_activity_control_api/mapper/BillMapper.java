@@ -25,6 +25,6 @@ public interface BillMapper {
     Bill dtoToEntity(BillDTO dto);
 
     @Mapping(target = "categoryId", expression = "java(entity.getCategory() != null ? entity.getCategory().getId().toString() : null)")
-    List<BillDTO> entitiesToBillDtos(List<Bill> entities);
+    List<BillDTO> entitiesToDtos(List<Bill> entities);
 
 }

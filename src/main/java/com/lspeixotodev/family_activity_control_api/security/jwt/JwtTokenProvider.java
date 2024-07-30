@@ -18,7 +18,7 @@ public class JwtTokenProvider {
     private String jwtSecret;
 
     @Value("${security.jwt.token.expire-length:3600000}")
-    private long jwtExpirationDate = 3600000;
+    private long jwtExpirationDate;
 
     public JWTAuthResponse generateToken(String username) {
 

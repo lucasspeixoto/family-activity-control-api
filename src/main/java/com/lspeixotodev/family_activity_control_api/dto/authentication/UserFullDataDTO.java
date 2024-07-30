@@ -2,7 +2,7 @@ package com.lspeixotodev.family_activity_control_api.dto.authentication;
 
 import java.util.Objects;
 
-public class UserDTO {
+public class UserFullDataDTO {
 
     private String id;
 
@@ -12,20 +12,24 @@ public class UserDTO {
 
     private String email;
 
-    public UserDTO() {
+    private byte[] profilePhoto;
+
+    public UserFullDataDTO() {
     }
 
-    public UserDTO(String id, String name, String username, String email) {
+    public UserFullDataDTO(String name, String username, String email, byte[] profilePhoto) {
+        this.name = name;
+        this.username = username;
+        this.email = email;
+        this.profilePhoto = profilePhoto;
+    }
+
+    public UserFullDataDTO(String id, String name, String username, String email, byte[] profilePhoto) {
         this.id = id;
         this.name = name;
         this.username = username;
         this.email = email;
-    }
-
-    public UserDTO(String name, String username, String email) {
-        this.name = name;
-        this.username = username;
-        this.email = email;
+        this.profilePhoto = profilePhoto;
     }
 
     public String getId() {
@@ -60,12 +64,19 @@ public class UserDTO {
         this.email = email;
     }
 
+    public byte[] getProfilePhoto() {
+        return profilePhoto;
+    }
+
+    public void setProfilePhoto(byte[] profilePhoto) {
+        this.profilePhoto = profilePhoto;
+    }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        UserDTO userDTO = (UserDTO) o;
+        UserFullDataDTO userDTO = (UserFullDataDTO) o;
         return Objects.equals(id, userDTO.id);
     }
 

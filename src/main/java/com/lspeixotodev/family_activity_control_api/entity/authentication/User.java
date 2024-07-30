@@ -1,7 +1,6 @@
 package com.lspeixotodev.family_activity_control_api.entity.authentication;
 
 import jakarta.persistence.*;
-
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -101,6 +100,7 @@ public class User {
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
     }
+
 
     @Override
     public boolean equals(Object o) {

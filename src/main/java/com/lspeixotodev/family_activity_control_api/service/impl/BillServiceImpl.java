@@ -9,7 +9,6 @@ import com.lspeixotodev.family_activity_control_api.mapper.BillMapper;
 import com.lspeixotodev.family_activity_control_api.repository.BillRepository;
 import com.lspeixotodev.family_activity_control_api.repository.CategoryRepository;
 import com.lspeixotodev.family_activity_control_api.service.BillService;
-import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,7 +57,7 @@ public class BillServiceImpl implements BillService {
     public List<BillDTO> getAllBills() {
         List<Bill> bills = billRepository.findAll();
 
-        return this.billMapper.entitiesToBillDtos(bills);
+        return this.billMapper.entitiesToDtos(bills);
     }
 
     @Override
@@ -142,6 +141,6 @@ public class BillServiceImpl implements BillService {
             throw new ResourceNotFoundException("Bill", "title", title);
         }
 
-        return this.billMapper.entitiesToBillDtos(bills);
+        return this.billMapper.entitiesToDtos(bills);
     }
 }

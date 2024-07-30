@@ -84,7 +84,7 @@ public class BillServiceTests {
         List<Bill> bills = Collections.singletonList(this.bill);
         when(billRepository.findAll()).thenReturn(bills);
 
-        List<BillDTO> mappedBillsDto = this.billMapper.entitiesToBillDtos(bills);
+        List<BillDTO> mappedBillsDto = this.billMapper.entitiesToDtos(bills);
 
         List<BillDTO> billsDto = this.billService.getAllBills();
 

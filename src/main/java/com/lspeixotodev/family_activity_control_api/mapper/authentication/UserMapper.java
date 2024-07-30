@@ -1,6 +1,7 @@
 package com.lspeixotodev.family_activity_control_api.mapper.authentication;
 
 import com.lspeixotodev.family_activity_control_api.dto.authentication.UserDTO;
+import com.lspeixotodev.family_activity_control_api.dto.authentication.UserFullDataDTO;
 import com.lspeixotodev.family_activity_control_api.entity.authentication.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -19,6 +20,9 @@ public interface UserMapper {
 
     @Mapping(target = "id", expression = "java(entity.getId() != null ? entity.getId().toString() : null)")
     UserDTO entityToDto(User entity);
+
+    @Mapping(target = "id", expression = "java(entity.getId() != null ? entity.getId().toString() : null)")
+    UserFullDataDTO entityToFullDataDto(User entity);
 
     @Mapping(target = "id", expression = "java(dto.getId() != null ? java.util.UUID.fromString(dto.getId()) : null)")
     User dtoToEntity(UserDTO dto);
