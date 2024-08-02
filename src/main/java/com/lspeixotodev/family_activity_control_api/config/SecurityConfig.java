@@ -6,7 +6,6 @@ import com.lspeixotodev.family_activity_control_api.security.jwt.JwtAuthenticati
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -48,21 +47,19 @@ public class SecurityConfig {
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-
         http
                 .cors(Customizer.withDefaults())
                 .httpBasic(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(
-                        (authorize) ->
-                                authorize
-                                        .requestMatchers(HttpMethod.POST, "/api/v1/auth/**").permitAll()
-                                        .requestMatchers(HttpMethod.PUT, "/api/v1/auth/**").permitAll()
-                                        .requestMatchers(
-                                                "/swagger-ui/**",
-                                                "/v3/api-docs/**"
-                                        ).permitAll()
-                                        .anyRequest().authenticated()
+                .authorizeHttpRequests((authorize) ->
+                        authorize
+                                .requestMatchers(
+                                        "/api/v1/auth/**",
+                                        "/swagger-ui/**",
+                                        "/v3/api-docs/**"
+                                ).permitAll()
+                                .anyRequest()
+                                .authenticated()
                 ).exceptionHandling(exception -> exception
                         .authenticationEntryPoint(authenticationEntryPoint)
                 ).sessionManagement(session -> session

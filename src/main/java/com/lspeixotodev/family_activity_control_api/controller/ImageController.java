@@ -15,7 +15,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 
-
 @Tag(name = "Image", description = "Endpoints for Managing user images")
 public interface ImageController {
 
@@ -102,7 +101,7 @@ public interface ImageController {
     @Operation(
             summary = "Find a image",
             description = "Service for find a image by id",
-            tags = {"Contact"},
+            tags = {"Image"},
             responses = {
                     @ApiResponse(
                             description = "Success",

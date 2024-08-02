@@ -13,14 +13,25 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.Authentication;
 
 @Validated
 @RestController
 @RequestMapping(value = "/api/v1/auth", produces = MediaType.APPLICATION_JSON)
 public class AuthControllerImpl implements AuthController {
 
+
     @Autowired
     private AuthServiceImpl authService;
+
+    @Override
+    public ResponseEntity<Boolean> getAuthentication(Authentication authentication) {
+        return new ResponseEntity<>(authentication.isAuthenticated(), HttpStatus.OK);
+    }
+    @Override
+    public ResponseEntity<Boolean> isUserAdmin(String username) {
+        return new ResponseEntity<>(authService.isUserAdmin(username), HttpStatus.OK);
+    }
 
     @Override
     public ResponseEntity<JWTAuthResponse> login(@Valid @RequestBody LoginDTO loginVO) {

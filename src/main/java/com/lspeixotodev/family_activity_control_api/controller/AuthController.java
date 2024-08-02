@@ -13,10 +13,52 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Authentication", description = "Endpoints for Login and Register")
 public interface AuthController {
+
+    @GetMapping("/is-authenticated")
+    @Operation(
+            summary = "Get user authentication state",
+            description = "Service for get with user is authenticated or not",
+            tags = {"Authentication"},
+            responses = {
+                    @ApiResponse(
+                            description = "Success",
+                            responseCode = "200",
+                            content = {
+                                    @Content(
+                                            mediaType = "application/json",
+                                            array = @ArraySchema(
+                                                    schema = @Schema(implementation = Boolean.class))
+                                    )
+                            }
+                    ),
+                    @ApiResponse(
+                            description = "Bad Request",
+                            responseCode = "400",
+                            content = @Content
+                    ),
+                    @ApiResponse(
+                            description = "Unauthorized",
+                            responseCode = "401",
+                            content = @Content
+                    ),
+                    @ApiResponse(
+                            description = "Not Found",
+                            responseCode = "404",
+                            content = @Content
+                    ),
+                    @ApiResponse(
+                            description = "Internal Server Error",
+                            responseCode = "500",
+                            content = @Content
+                    )
+            }
+    )
+    ResponseEntity<Boolean> getAuthentication(Authentication authentication);
 
     @PostMapping(value = "/login", produces = {MediaType.APPLICATION_JSON})
     @Operation(
@@ -145,4 +187,45 @@ public interface AuthController {
             @PathVariable("username") String username,
             @RequestHeader("Authorization") String refreshToken
     );
+
+    @GetMapping(value = "/user-role")
+    @Operation(
+            summary = "Endpoint to check if logged user is admin",
+            description = "Service for check if logged user is admin",
+            tags = {"Authentication"},
+            responses = {
+                    @ApiResponse(
+                            description = "Success",
+                            responseCode = "200",
+                            content = {
+                                    @Content(
+                                            mediaType = "application/json",
+                                            array = @ArraySchema(
+                                                    schema = @Schema(implementation = Boolean.class))
+                                    )
+                            }
+                    ),
+                    @ApiResponse(
+                            description = "Bad Request",
+                            responseCode = "400",
+                            content = @Content
+                    ),
+                    @ApiResponse(
+                            description = "Unauthorized",
+                            responseCode = "401",
+                            content = @Content
+                    ),
+                    @ApiResponse(
+                            description = "Not Found",
+                            responseCode = "404",
+                            content = @Content
+                    ),
+                    @ApiResponse(
+                            description = "Internal Server Error",
+                            responseCode = "500",
+                            content = @Content
+                    )
+            }
+    )
+    ResponseEntity<Boolean> isUserAdmin(@RequestParam("username") String username);
 }
