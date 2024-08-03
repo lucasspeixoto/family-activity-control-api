@@ -19,13 +19,13 @@ import java.util.List;
 @Validated
 @RestController
 @RequestMapping(value = "/api/v1/category")
-@PreAuthorize("hasRole('ROLE_ADMIN')")
 public class CategoryControllerImpl implements CategoryController {
 
     @Autowired
     private CategoryServiceImpl categoryService;
 
     @Override
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<CategoryDTO> create(@RequestBody CategoryDTO categoryDTO) {
         return new ResponseEntity<>(this.categoryService.create(categoryDTO), HttpStatus.CREATED);
     }
@@ -47,11 +47,13 @@ public class CategoryControllerImpl implements CategoryController {
     }
 
     @Override
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<CategoryDTO> update(@RequestBody CategoryDTO categoryDTO, @PathVariable String id) {
         return new ResponseEntity<>(this.categoryService.updateCategory(categoryDTO, id), HttpStatus.OK);
     }
 
     @Override
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<CategoryDTO> deleteCategory(@PathVariable String id) {
         return new ResponseEntity<>(this.categoryService.deleteCategory(id), HttpStatus.OK);
     }
