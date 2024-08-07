@@ -1,5 +1,7 @@
 package com.lspeixotodev.family_activity_control_api.entity.bill;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.lspeixotodev.family_activity_control_api.entity.authentication.User;
 import com.lspeixotodev.family_activity_control_api.entity.category.Category;
 import com.lspeixotodev.family_activity_control_api.jacoco.ExcludeFromJacocoGeneratedReport;
 import jakarta.persistence.*;
@@ -12,14 +14,14 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Entity
-@Table(name = "bill", uniqueConstraints = {@UniqueConstraint(columnNames = "title")})
+@Table(name = "bill")
 public class Bill {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-    @Column(nullable = false, unique = true, length = 50)
+    @Column(nullable = false, length = 50)
     private String title;
 
     @Column(nullable = false, length = 50)
@@ -49,11 +51,16 @@ public class Bill {
     @UpdateTimestamp
     private Date updatedAt;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @JsonIgnore
+    private User user;
+
     public Bill() {
     }
 
     @ExcludeFromJacocoGeneratedReport
-    public Bill(UUID id, String title, String owner, BigDecimal amount, Category category, String description, Date finishAt, Date createdAt, Date updatedAt, BillType type) {
+    public Bill(UUID id, String title, String owner, BigDecimal amount, Category category, String description, Date finishAt, Date createdAt, Date updatedAt, BillType type, User user) {
         this.id = id;
         this.title = title;
         this.owner = owner;
@@ -64,10 +71,11 @@ public class Bill {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.type = type;
+        this.user = user;
     }
 
     @ExcludeFromJacocoGeneratedReport
-    public Bill(String title, String owner, BigDecimal amount, Category category, String description, Date finishAt, Date createdAt, Date updatedAt, BillType type) {
+    public Bill(String title, String owner, BigDecimal amount, Category category, String description, Date finishAt, Date createdAt, Date updatedAt, BillType type, User user) {
         this.title = title;
         this.owner = owner;
         this.amount = amount;
@@ -77,6 +85,7 @@ public class Bill {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.type = type;
+        this.user = user;
     }
 
     @ExcludeFromJacocoGeneratedReport
@@ -91,6 +100,7 @@ public class Bill {
         this.createdAt = bill.createdAt;
         this.updatedAt = bill.updatedAt;
         this.type = bill.type;
+        this.user = bill.user;
     }
 
     public UUID getId() {
@@ -173,6 +183,14 @@ public class Bill {
         this.type = type;
     }
 
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
     @Override
     @ExcludeFromJacocoGeneratedReport
     public boolean equals(Object o) {
@@ -202,6 +220,7 @@ public class Bill {
                 ", type: " + type +
                 ", createdAt: " + createdAt +
                 ", updatedAt: " + updatedAt +
+                ", user: " + user +
                 '}';
     }
 }

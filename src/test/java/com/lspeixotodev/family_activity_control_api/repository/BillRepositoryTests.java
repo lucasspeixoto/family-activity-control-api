@@ -1,14 +1,20 @@
 package com.lspeixotodev.family_activity_control_api.repository;
 
 import com.lspeixotodev.family_activity_control_api.__mocks__.MockBill;
+import com.lspeixotodev.family_activity_control_api.entity.authentication.User;
 import com.lspeixotodev.family_activity_control_api.entity.bill.Bill;
+import com.lspeixotodev.family_activity_control_api.entity.category.Category;
+import com.lspeixotodev.family_activity_control_api.integrationtests.AbstractIntegrationTest;
+import com.lspeixotodev.family_activity_control_api.repository.authentication.UserRepository;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.text.ParseException;
 import java.util.List;
@@ -16,18 +22,29 @@ import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
+@ExtendWith(SpringExtension.class)
 @DataJpaTest
-@AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@ActiveProfiles("it")
 @DisplayName("Bill Repository (Integration Tests)")
-public class BillRepositoryTests {
+public class BillRepositoryTests extends AbstractIntegrationTest {
 
     @Autowired
     private BillRepository billRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private CategoryRepository categoryRepository;
+
     public Bill bill;
 
     public Bill secondBill;
+
+    public Category billCategory;
 
     @InjectMocks
     public MockBill mockBill;
@@ -36,14 +53,22 @@ public class BillRepositoryTests {
     @BeforeEach
     public void config() throws ParseException {
         this.bill = mockBill.getBill();
+        this.bill.setCategory(this.billCategory);
+
         this.secondBill = mockBill.getSecondBill();
+        this.secondBill.setCategory(this.billCategory);
+    }
+
+    @BeforeAll
+    public void setup() {
+        Category category = this.mockBill.getCategoryForBill();
+        this.billCategory = categoryRepository.save(category);
     }
 
     @Test
     @DisplayName("Bill Repository: Save a bill then Returns Saved Bill")
     @Order(1)
     public void billRepository_SaveBill_ReturnsSavedBill() {
-
 
         Bill savedBill = billRepository.save(this.bill);
 
@@ -130,9 +155,12 @@ public class BillRepositoryTests {
     @Order(7)
     public void billRepository_findByTitleContainingIgnoreCase_ThenReturnBill() {
 
-        billRepository.save(this.bill);
+        Bill savedBill = billRepository.save(this.bill);
 
-        List<Bill> optionalBill = billRepository.findByTitleContainingIgnoreCase(this.bill.getTitle());
+        List<Bill> optionalBill = billRepository.findByTitleAndUserId(
+                savedBill.getTitle(),
+                savedBill.getUser().getId()
+        );
 
         assertThat(optionalBill.size()).isGreaterThan(0);
     }

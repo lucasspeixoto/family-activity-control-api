@@ -2,6 +2,7 @@ package com.lspeixotodev.family_activity_control_api.service.impl;
 
 import com.lspeixotodev.family_activity_control_api.dto.bill.BillDTO;
 import com.lspeixotodev.family_activity_control_api.dto.category.CategoryDTO;
+import com.lspeixotodev.family_activity_control_api.entity.authentication.User;
 import com.lspeixotodev.family_activity_control_api.entity.bill.Bill;
 import com.lspeixotodev.family_activity_control_api.entity.category.Category;
 import com.lspeixotodev.family_activity_control_api.infra.exceptions.ResourceNotFoundException;
@@ -34,17 +35,24 @@ public class BillServiceImpl implements BillService {
     private CategoryServiceImpl categoryService;
 
     @Autowired
+    private UserServiceImpl userService;
+
+    @Autowired
     private BillMapper billMapper;
 
     @Override
-    public BillDTO createBill(BillDTO billDTO) {
+    public BillDTO createBill(BillDTO billDTO, String userId) {
         logger.info("Start creating bill at: {}", LocalDateTime.now());
+
+        User user = this.userService.findExistingUserById(userId);
 
         CategoryDTO categoryDTO = categoryService.findCategoryById(billDTO.getCategoryId());
 
         Category category = categoryService.categoryDTOToCategory(categoryDTO);
 
         Bill bill = this.billMapper.dtoToEntity(billDTO);
+
+        bill.setUser(user);
 
         bill.setCategory(category);
 
@@ -54,10 +62,13 @@ public class BillServiceImpl implements BillService {
     }
 
     @Override
-    public List<BillDTO> getAllBills() {
-        List<Bill> bills = billRepository.findAll();
+    public List<BillDTO> findAllBills(String userId) {
+        logger.info("Start finding all bills by user at: {}", LocalDateTime.now());
+
+        List<Bill> bills = billRepository.findAllBillsByUser(UUID.fromString(userId));
 
         return this.billMapper.entitiesToDtos(bills);
+
     }
 
     @Override
@@ -116,7 +127,9 @@ public class BillServiceImpl implements BillService {
     public BillDTO deleteBill(String id) {
         logger.info("Start delete a bill at: {}", LocalDateTime.now());
 
-        Optional<Bill> optionalBill = billRepository.findById(UUID.fromString(id));
+        UUID uuid = UUID.fromString(id);
+
+        Optional<Bill> optionalBill = billRepository.findById(uuid);
 
         if (optionalBill.isEmpty()) {
             logger.info("Fail to delete a bill with id {}", id);
@@ -125,16 +138,16 @@ public class BillServiceImpl implements BillService {
 
         Bill existingBill = optionalBill.get();
 
-        billRepository.deleteById(existingBill.getId());
+        billRepository.delete(existingBill);
 
         return this.billMapper.entityToDto(existingBill);
     }
 
     @Override
-    public List<BillDTO> findBillByTitle(String title) {
+    public List<BillDTO> findBillByTitleAndUser(String title, String userId) {
         logger.info("Start find a bill by title at: {}", LocalDateTime.now());
 
-        List<Bill> bills = billRepository.findByTitleContainingIgnoreCase(title);
+        List<Bill> bills = billRepository.findByTitleAndUserId(title, UUID.fromString(userId));
 
         if (bills.isEmpty()) {
             logger.info("Fail to find a bill by title with '{}' title", title);

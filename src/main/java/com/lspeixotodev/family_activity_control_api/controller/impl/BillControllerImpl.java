@@ -8,10 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -24,19 +21,25 @@ public class BillControllerImpl implements BillController {
     private BillServiceImpl billService;
 
     @Override
-    public ResponseEntity<BillDTO> create(@RequestBody BillDTO billDTO) {
-        return new ResponseEntity<>(this.billService.createBill(billDTO), HttpStatus.CREATED);
+    public ResponseEntity<BillDTO> create(
+            @RequestBody BillDTO billDTO,
+            @RequestParam(value = "userId") String userId
+    ) {
+        return new ResponseEntity<>(this.billService.createBill(billDTO, userId), HttpStatus.CREATED);
     }
 
     @Override
-    public ResponseEntity<BillDTO> update(@RequestBody BillDTO billDTO, @PathVariable String id
+    public ResponseEntity<BillDTO> update(
+            @RequestBody BillDTO billDTO, @PathVariable String id
     ) {
         return new ResponseEntity<>(this.billService.updateBill(billDTO, id), HttpStatus.OK);
     }
 
     @Override
-    public ResponseEntity<List<BillDTO>> getAllBills() {
-        return new ResponseEntity<>(this.billService.getAllBills(), HttpStatus.OK);
+    public ResponseEntity<List<BillDTO>> findAllBills(
+            @RequestParam(value = "userId") String userId
+    ) {
+        return new ResponseEntity<>(this.billService.findAllBills(userId), HttpStatus.OK);
     }
 
     @Override
@@ -45,8 +48,11 @@ public class BillControllerImpl implements BillController {
     }
 
     @Override
-    public ResponseEntity<List<BillDTO>> findBillByTitle(@PathVariable String title) {
-        return new ResponseEntity<>(this.billService.findBillByTitle(title), HttpStatus.OK);
+    public ResponseEntity<List<BillDTO>> findBillByTitleAndUser(
+            @RequestParam(value = "title") String title,
+            @RequestParam(value = "userId") String userId
+    ) {
+        return new ResponseEntity<>(this.billService.findBillByTitleAndUser(title, userId), HttpStatus.OK);
     }
 
 

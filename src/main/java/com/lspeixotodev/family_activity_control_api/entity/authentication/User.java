@@ -1,10 +1,10 @@
 package com.lspeixotodev.family_activity_control_api.entity.authentication;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.lspeixotodev.family_activity_control_api.entity.bill.Bill;
 import jakarta.persistence.*;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
+
+import java.util.*;
 
 @Entity
 @Table(name = "users")
@@ -32,6 +32,7 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id")
     )
     private Set<Role> roles = new HashSet<>();
+
 
     public User() {
     }
@@ -100,7 +101,6 @@ public class User {
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
     }
-
 
     @Override
     public boolean equals(Object o) {

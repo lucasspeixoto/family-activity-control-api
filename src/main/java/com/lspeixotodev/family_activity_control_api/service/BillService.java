@@ -6,16 +6,17 @@ import java.util.List;
 
 public interface BillService {
 
-    BillDTO createBill(BillDTO createBillDTO);
+    BillDTO createBill(BillDTO createBillDTO, String userId);
 
     BillDTO updateBill(BillDTO updateBillDTO, String id);
 
-    List<BillDTO> getAllBills();
+    List<BillDTO> findAllBills(String userId);
 
     BillDTO findBillById(String id);
 
 
     BillDTO deleteBill(String id);
 
-    List<BillDTO> findBillByTitle(String name);
+    List<BillDTO> findBillByTitleAndUser(String name, String userId);
+
 }

@@ -1,7 +1,6 @@
 package com.lspeixotodev.family_activity_control_api.controller;
 
 import com.lspeixotodev.family_activity_control_api.dto.bill.BillDTO;
-import com.lspeixotodev.family_activity_control_api.infra.validation.ValidationGroups.Create;
 import com.lspeixotodev.family_activity_control_api.util.constants.MediaType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -12,7 +11,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -57,7 +55,10 @@ public interface BillController {
                     )
             }
     )
-    ResponseEntity<BillDTO> create(@Validated(Create.class) BillDTO billDTO);
+    ResponseEntity<BillDTO> create(
+            @Valid BillDTO billDTO,
+            String userId
+    );
 
     @PutMapping(
             value = "/update/{id}",
@@ -142,7 +143,7 @@ public interface BillController {
                     )
             }
     )
-    ResponseEntity<List<BillDTO>> getAllBills() throws Exception;
+    ResponseEntity<List<BillDTO>> findAllBills(@Valid String userId) throws Exception;
 
     @GetMapping(
             value = "/find-by-id/{id}",
@@ -233,7 +234,7 @@ public interface BillController {
     ResponseEntity<BillDTO> deleteBill(String id);
 
     @GetMapping(
-            value = "/find-by-title/{title}",
+            value = "/find-by-title",
             produces = {MediaType.APPLICATION_JSON}
     )
     @Operation(
@@ -274,5 +275,5 @@ public interface BillController {
                     )
             }
     )
-    ResponseEntity<List<BillDTO>> findBillByTitle(String title);
+    ResponseEntity<List<BillDTO>> findBillByTitleAndUser(String title, String userId);
 }

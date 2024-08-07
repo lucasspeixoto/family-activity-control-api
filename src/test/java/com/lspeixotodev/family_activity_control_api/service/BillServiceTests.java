@@ -8,6 +8,7 @@ import com.lspeixotodev.family_activity_control_api.mapper.BillMapper;
 import com.lspeixotodev.family_activity_control_api.repository.BillRepository;
 import com.lspeixotodev.family_activity_control_api.service.impl.BillServiceImpl;
 import com.lspeixotodev.family_activity_control_api.service.impl.CategoryServiceImpl;
+import com.lspeixotodev.family_activity_control_api.service.impl.UserServiceImpl;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mapstruct.factory.Mappers;
@@ -40,6 +41,18 @@ public class BillServiceTests {
     @InjectMocks
     private BillServiceImpl billService;
 
+    @Mock
+    private UserServiceImpl userService;
+
+    /*
+    @Spy
+    Purpose: Creates a spy instance of a class. This means that the object retains its real behavior
+     but allows you to stub or verify specific methods.
+    Behavior: Unlike mocks, spies call real methods unless you specifically stub them to return
+     different values or behaviors. You can use spies to partially mock real objects.
+    Use Case: When you want to use a real object but need to control or verify specific methods
+     while keeping the original behavior of the rest.
+     */
     @Spy
     private BillMapper billMapper = Mappers.getMapper(BillMapper.class);
 
@@ -60,11 +73,14 @@ public class BillServiceTests {
     @Order(1)
     @DisplayName("Bill Service: Create Bill then return created Bill Dto")
     public void billService_WhenCreateABill_ThenReturnCreateBillDto() {
+        String userId = this.bill.getUser().getId().toString();
+
+        when(userService.findExistingUserById(userId)).thenReturn(this.bill.getUser());
         when(billRepository.save(any(Bill.class))).thenReturn(this.bill);
 
         BillDTO mappedCreateBillFromBill = this.billMapper.entityToDto(this.bill);
 
-        BillDTO billDTO = this.billService.createBill(this.billDTO);
+        BillDTO billDTO = this.billService.createBill(this.billDTO, userId);
 
         assertThat(billDTO).isNotNull();
         assertThat(billDTO.getTitle()).isEqualTo(mappedCreateBillFromBill.getTitle());
@@ -80,13 +96,14 @@ public class BillServiceTests {
     @Test
     @Order(2)
     @DisplayName("Bill Service: When Get All Bill then return a List of BillDTO")
-    public void billService_WhenGetAllBills_ThenReturnCreateBillDto() {
+    public void billService_WhenFindAllBills_ThenReturnCreateBillDto() {
+        UUID uuid = this.bill.getUser().getId();
         List<Bill> bills = Collections.singletonList(this.bill);
-        when(billRepository.findAll()).thenReturn(bills);
+        when(billRepository.findAllBillsByUser(uuid)).thenReturn(bills);
 
         List<BillDTO> mappedBillsDto = this.billMapper.entitiesToDtos(bills);
 
-        List<BillDTO> billsDto = this.billService.getAllBills();
+        List<BillDTO> billsDto = this.billService.findAllBills(uuid.toString());
 
         assertThat(billsDto).isNotNull();
         assertThat(billsDto.size()).isEqualTo(mappedBillsDto.size());

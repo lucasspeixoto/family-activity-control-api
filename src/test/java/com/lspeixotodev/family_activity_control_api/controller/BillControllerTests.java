@@ -6,6 +6,7 @@ import com.lspeixotodev.family_activity_control_api.config.TestConfigs;
 import com.lspeixotodev.family_activity_control_api.dto.authentication.JWTAuthResponse;
 import com.lspeixotodev.family_activity_control_api.dto.authentication.LoginDTO;
 import com.lspeixotodev.family_activity_control_api.dto.bill.BillDTO;
+import com.lspeixotodev.family_activity_control_api.entity.authentication.User;
 import com.lspeixotodev.family_activity_control_api.entity.bill.Bill;
 import com.lspeixotodev.family_activity_control_api.infra.exceptions.ResourceNotFoundException;
 import com.lspeixotodev.family_activity_control_api.integrationtests.AbstractIntegrationTest;
@@ -75,6 +76,8 @@ public class BillControllerTests extends AbstractIntegrationTest {
 
     private BillDTO billDTO;
 
+    private User user;
+
     private static String accessToken;
 
 
@@ -82,6 +85,7 @@ public class BillControllerTests extends AbstractIntegrationTest {
     public void config() throws ParseException {
         this.bill = mockBill.getBill();
         this.billDTO = mockBill.getBillDTO();
+        this.user = mockBill.getFirstBillUser();
     }
 
     @Test
@@ -109,9 +113,10 @@ public class BillControllerTests extends AbstractIntegrationTest {
     @Order(1)
     @DisplayName("Bill Controller: Create Bill With Valid Data Then returns created")
     public void billController_CreateBillWithValidData_ThenReturnsCreated() throws Exception {
-        when(billService.createBill(any(BillDTO.class))).thenReturn(this.billDTO);
+        when(billService.createBill(any(BillDTO.class), anyString())).thenReturn(this.billDTO);
 
         ResultActions response = mvc.perform(post("/api/v1/bill/create")
+                .param("userId", this.user.getId().toString())
                 .content(objectMapper.writeValueAsString(this.billDTO))
                 .header(TestConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer " + accessToken)
                 .contentType(MediaType.APPLICATION_JSON));
@@ -120,7 +125,7 @@ public class BillControllerTests extends AbstractIntegrationTest {
                 .andExpect(jsonPath("$.title", CoreMatchers.is("Energia")))
                 .andExpect(jsonPath("$.owner", CoreMatchers.is("Lucas P")))
                 .andExpect(jsonPath("$.amount", CoreMatchers.is(89.50)))
-                .andExpect(jsonPath("$.categoryId", CoreMatchers.is("8de274fd-6a14-46be-9816-4552a71f9e16")))
+                .andExpect(jsonPath("$.categoryId", CoreMatchers.is("d8695c01-b127-4f1f-a1ca-d031876231a2")))
                 .andExpect(jsonPath("$.description", CoreMatchers.is("Pagar a conta de energia")))
                 .andExpect(jsonPath("$.type", CoreMatchers.is("FIXED")))
                 .andDo(MockMvcResultHandlers.print());
@@ -130,7 +135,7 @@ public class BillControllerTests extends AbstractIntegrationTest {
     @Order(2)
     @DisplayName("Bill Controller: Create Bill With Invalid Title Then Throws UnprocessableEntity")
     public void billController_CreateBillWithInvalidTitle_ThenThrowsUnprocessableEntity() throws Exception {
-        when(billService.createBill(any(BillDTO.class))).thenReturn(this.billDTO);
+        when(billService.createBill(any(BillDTO.class), anyString())).thenReturn(this.billDTO);
 
         this.billDTO.setTitle("ti");
 
@@ -156,7 +161,7 @@ public class BillControllerTests extends AbstractIntegrationTest {
     @Order(3)
     @DisplayName("Bill Controller: Create Bill With Invalid Owner Then Throws UnprocessableEntity")
     public void billController_CreateBillWithInvalidOwner_ThenThrowsUnprocessableEntity() throws Exception {
-        when(billService.createBill(any(BillDTO.class))).thenReturn(this.billDTO);
+        when(billService.createBill(any(BillDTO.class), anyString())).thenReturn(this.billDTO);
 
         this.billDTO.setOwner("ti");
 
@@ -184,7 +189,7 @@ public class BillControllerTests extends AbstractIntegrationTest {
     @Order(4)
     @DisplayName("Bill Controller: Create Bill With Invalid Description Then Throws UnprocessableEntity")
     public void billController_CreateBillWithInvalidDescription_ThenThrowsUnprocessableEntity() throws Exception {
-        when(billService.createBill(any(BillDTO.class))).thenReturn(this.billDTO);
+        when(billService.createBill(any(BillDTO.class), anyString())).thenReturn(this.billDTO);
 
         this.billDTO.setDescription("ti");
 
@@ -211,7 +216,7 @@ public class BillControllerTests extends AbstractIntegrationTest {
     @Order(5)
     @DisplayName("Bill Controller: Create Bill With Invalid FinishAt Then Throws UnprocessableEntity")
     public void billController_CreateBillWithInvalidFinishAt_ThenThrowsUnprocessableEntity() throws Exception {
-        when(billService.createBill(any(BillDTO.class))).thenReturn(this.billDTO);
+        when(billService.createBill(any(BillDTO.class), anyString())).thenReturn(this.billDTO);
 
         this.billDTO.setFinishAt(null);
 
@@ -226,11 +231,13 @@ public class BillControllerTests extends AbstractIntegrationTest {
 
     @Test
     @Order(6)
-    @DisplayName("Bill Controller: getAllBills Then Returns BillDTO List")
-    public void billController_getAllBills_ThenReturnsBillDTOList() throws Exception {
-        when(billService.getAllBills()).thenReturn(Collections.singletonList(this.billDTO));
+    @DisplayName("Bill Controller: findAllBills Then Returns BillDTO List")
+    public void billController_findAllBills_ThenReturnsBillDTOList() throws Exception {
+        String userId = this.user.getId().toString();
+        when(billService.findAllBills(userId)).thenReturn(Collections.singletonList(this.billDTO));
 
         mvc.perform(get("/api/v1/bill")
+                        .param("userId", userId)
                         .header(TestConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer " + accessToken)
                         .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
                 .andDo(MockMvcResultHandlers.print())
@@ -275,12 +282,14 @@ public class BillControllerTests extends AbstractIntegrationTest {
     public void billController_WhenFindBillByTitleThatExists_ThenReturnBillDTO() throws Exception {
         String requiredTitleSearch = "Energia";
 
-        when(billService.findBillByTitle(requiredTitleSearch)).thenReturn(Collections.singletonList(this.billDTO));
+        when(billService.findBillByTitleAndUser(requiredTitleSearch, this.user.getId().toString()))
+                .thenReturn(Collections.singletonList(this.billDTO));
 
-        mvc.perform(
-                        get("/api/v1/bill/find-by-title/{title}", requiredTitleSearch)
-                                .header(TestConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer " + accessToken)
-                                .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
+        mvc.perform(get("/api/v1/bill/find-by-title")
+                        .param("title", requiredTitleSearch)
+                        .param("userId", this.user.getId().toString())
+                        .header(TestConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer " + accessToken)
+                        .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
                 .andDo(MockMvcResultHandlers.print());
     }
 
@@ -290,12 +299,15 @@ public class BillControllerTests extends AbstractIntegrationTest {
     public void billController_WhenFindBillByTitleThatDoesNotExists_ThenThrowsResourceNotFoundException() throws Exception {
         String requiredTitleSearch = "Energia";
 
-        when(billService.findBillByTitle(requiredTitleSearch)).thenThrow(new ResourceNotFoundException("Bill", "id", requiredTitleSearch));
+        when(billService.findBillByTitleAndUser(requiredTitleSearch, this.user.getId().toString()))
+                .thenThrow(new ResourceNotFoundException("Bill", "id", requiredTitleSearch));
 
-        mvc.perform(
-                        get("/api/v1/bill/find-by-title/{title}", requiredTitleSearch)
-                                .header(TestConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer " + accessToken)
-                                .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isNotFound())
+        mvc.perform(get("/api/v1/bill/find-by-title")
+                        .param("title", requiredTitleSearch)
+                        .param("userId", this.user.getId().toString())
+                        .header(TestConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer " + accessToken)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.message", CoreMatchers.is("Bill not found with id " + requiredTitleSearch)))
                 .andDo(MockMvcResultHandlers.print());
 
@@ -317,7 +329,7 @@ public class BillControllerTests extends AbstractIntegrationTest {
                 .andExpect(jsonPath("$.title", CoreMatchers.is("Energia")))
                 .andExpect(jsonPath("$.owner", CoreMatchers.is("Lucas P")))
                 .andExpect(jsonPath("$.amount", CoreMatchers.is(89.50)))
-                .andExpect(jsonPath("$.categoryId", CoreMatchers.is("8de274fd-6a14-46be-9816-4552a71f9e16")))
+                .andExpect(jsonPath("$.categoryId", CoreMatchers.is("d8695c01-b127-4f1f-a1ca-d031876231a2")))
                 .andExpect(jsonPath("$.description", CoreMatchers.is("Pagar a conta de energia")))
                 .andExpect(jsonPath("$.type", CoreMatchers.is("FIXED")))
                 .andDo(MockMvcResultHandlers.print());
@@ -354,15 +366,11 @@ public class BillControllerTests extends AbstractIntegrationTest {
                 .thenThrow(new ResourceNotFoundException("Bill", "id", requiredIdSearch));
 
         ResultActions response = mvc.perform(
-                delete(
-                        "/api/v1/bill/delete/{id}",
-                        requiredIdSearch
-                )
+                delete("/api/v1/bill/delete/{id}", requiredIdSearch)
                         .header(TestConfigs.HEADER_PARAM_AUTHORIZATION, "Bearer " + accessToken)
                         .contentType(MediaType.APPLICATION_JSON));
         response.andExpect(status().isNotFound())
                 .andDo(MockMvcResultHandlers.print());
-
     }
 
     @Test

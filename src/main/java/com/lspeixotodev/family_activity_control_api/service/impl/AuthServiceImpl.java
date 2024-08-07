@@ -29,7 +29,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Service
@@ -68,7 +67,7 @@ public class AuthServiceImpl implements AuthService {
         String username = loginDTO.getUsernameOrEmail();
         String password = loginDTO.getPassword();
 
-        if (this.userRepository.findByUsernameOrEmail(username, username).isEmpty()) {
+        if (this.userRepository.findUserByUsernameOrEmail(username, username).isEmpty()) {
             throw new ResourceNotFoundException("User", "user/email", username);
         }
 
@@ -89,7 +88,7 @@ public class AuthServiceImpl implements AuthService {
 
         var tokenResponse = new JWTAuthResponse();
 
-        if (this.userRepository.findByUsernameOrEmail(username, username).isEmpty()) {
+        if (this.userRepository.findUserByUsernameOrEmail(username, username).isEmpty()) {
             throw new ResourceNotFoundException("User", "user", username);
         }
 

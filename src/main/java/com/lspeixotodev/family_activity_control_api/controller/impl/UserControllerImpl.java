@@ -20,8 +20,8 @@ public class UserControllerImpl implements UserController {
     private UserServiceImpl userService;
 
     @Override
-    public ResponseEntity<UserDTO> getUserData(@PathVariable(value = "usernameOrEmail") String usernameOrEmail) {
-        UserDTO userDTO = this.userService.findByUsernameOrEmail(usernameOrEmail, usernameOrEmail);
+    public ResponseEntity<UserDTO> findUserByUsernameOrEmail(@PathVariable(value = "usernameOrEmail") String usernameOrEmail) {
+        UserDTO userDTO = this.userService.findUserByUsernameOrEmail(usernameOrEmail, usernameOrEmail);
 
         return ResponseEntity.ok(userDTO);
     }

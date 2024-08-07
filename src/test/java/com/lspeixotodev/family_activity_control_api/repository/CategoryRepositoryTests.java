@@ -2,12 +2,16 @@ package com.lspeixotodev.family_activity_control_api.repository;
 
 import com.lspeixotodev.family_activity_control_api.__mocks__.MockCategory;
 import com.lspeixotodev.family_activity_control_api.entity.category.Category;
+import com.lspeixotodev.family_activity_control_api.integrationtests.AbstractIntegrationTest;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.text.ParseException;
 import java.util.List;
@@ -15,11 +19,14 @@ import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
+@ExtendWith(SpringExtension.class)
 @DataJpaTest
-@AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@ActiveProfiles("it")
 @DisplayName("Category Repository (Integration Tests)")
-public class CategoryRepositoryTests {
+public class CategoryRepositoryTests extends AbstractIntegrationTest {
 
     @Autowired
     private CategoryRepository categoryRepository;

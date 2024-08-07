@@ -1,6 +1,7 @@
 package com.lspeixotodev.family_activity_control_api.__mocks__;
 
 import com.lspeixotodev.family_activity_control_api.dto.bill.BillDTO;
+import com.lspeixotodev.family_activity_control_api.entity.authentication.User;
 import com.lspeixotodev.family_activity_control_api.entity.bill.Bill;
 import com.lspeixotodev.family_activity_control_api.entity.bill.BillType;
 import com.lspeixotodev.family_activity_control_api.entity.category.Category;
@@ -26,6 +27,18 @@ public class MockBill {
         return mockBillDTO();
     }
 
+    public User getFirstBillUser() {
+        return mockFirstBillUser();
+    }
+
+    public User getSecondBillUser() {
+        return mockSecondBillUser();
+    }
+
+    public Category getCategoryForBill() {
+        return mockCategoryForBill();
+    }
+
 
     private Bill mockBill() throws ParseException {
 
@@ -36,8 +49,10 @@ public class MockBill {
         bill.setOwner("Lucas P");
         bill.setAmount(new BigDecimal("89.50"));
         bill.setDescription("Pagar a conta de energia");
-        bill.setFinishAt(simpleDateFormat.parse("30/10/2991"));
+        bill.setFinishAt(simpleDateFormat.parse("30/10/1991"));
         bill.setType(BillType.FIXED);
+
+        bill.setUser(mockFirstBillUser());
 
         return bill;
     }
@@ -52,32 +67,57 @@ public class MockBill {
         bill.setAmount(new BigDecimal("89.50"));
         bill.setCategoryId(category.getId().toString());
         bill.setDescription("Pagar a conta de energia");
-        bill.setFinishAt(simpleDateFormat.parse("30/10/2991"));
+        bill.setFinishAt(simpleDateFormat.parse("30/10/1991"));
         bill.setType(BillType.FIXED);
 
         return bill;
     }
 
     private Bill mockSecondBill() throws ParseException {
-
+        Category category = mockCategoryForBill();
         Bill anotherBill = new Bill();
         anotherBill.setId(UUID.randomUUID());
         anotherBill.setTitle("Internet");
         anotherBill.setOwner("Lucas P");
         anotherBill.setAmount(new BigDecimal(120));
+        anotherBill.setCategory(category);
         anotherBill.setDescription("Pagar a conta de internet");
-        anotherBill.setFinishAt(simpleDateFormat.parse("30/10/2991"));
+        anotherBill.setFinishAt(simpleDateFormat.parse("30/10/1991"));
         anotherBill.setType(BillType.FIXED);
+
+        anotherBill.setUser(mockSecondBillUser());
         
         return anotherBill;
     }
 
     private Category mockCategoryForBill() {
         Category category = new Category();
-        category.setId(UUID.fromString("8de274fd-6a14-46be-9816-4552a71f9e16"));
-        category.setTitle("Academia/Ginástica");
-        category.setDescription("Academia/Ginástica para os filhos");
+        category.setId(UUID.fromString("d8695c01-b127-4f1f-a1ca-d031876231a2"));
+        category.setTitle("Contas");
+        category.setDescription("Contas de mês");
 
         return category;
+    }
+
+    private User mockFirstBillUser() {
+        User user = new User();
+        user.setId(UUID.fromString("fd361c69-4657-44da-917f-0ee7c00e491d"));
+        user.setName("Lucas Peixoto");
+        user.setEmail("lspeixotodev@gmail.com");
+        user.setUsername("lspeixotodev");
+        user.setPassword("password123");
+
+        return user;
+    }
+
+    private User mockSecondBillUser() {
+        User user = new User();
+        user.setId(UUID.fromString("b4c8d28e-a537-4a89-86de-171da4c56c5f"));
+        user.setName("Admin");
+        user.setEmail("admin@email.com");
+        user.setUsername("admin");
+        user.setPassword("admin");
+
+        return user;
     }
 }

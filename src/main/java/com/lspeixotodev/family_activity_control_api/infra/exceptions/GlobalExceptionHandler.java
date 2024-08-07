@@ -7,8 +7,9 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.*;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
@@ -21,6 +22,61 @@ import java.util.List;
 @RestControllerAdvice
 @ExcludeFromJacocoGeneratedReport
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
+
+    //Overrides
+    @Override
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(
+            MethodArgumentNotValidException exception,
+            @NotNull HttpHeaders headers,
+            @NotNull HttpStatusCode status,
+            WebRequest webRequest
+    ) {
+
+        List<String> errorMessages = new ArrayList<>();
+
+        exception.getBindingResult().getAllErrors().forEach((error) -> {
+            String message = error.getDefaultMessage();
+
+            errorMessages.add(message);
+        });
+
+        String joinedErrors = String.join(" ", errorMessages);
+
+        HttpStatus specificStatus = HttpStatus.UNPROCESSABLE_ENTITY;
+
+        ErrorDetail errorDetails = new ErrorDetail(
+                LocalDateTime.now(),
+                joinedErrors,
+                webRequest.getDescription(false),
+                specificStatus.value()
+        );
+
+        return ResponseEntity
+                .status(specificStatus)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(errorDetails);
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleMissingServletRequestParameter(
+            MissingServletRequestParameterException exception,
+            @NotNull HttpHeaders headers,
+            @NotNull HttpStatusCode status,
+            WebRequest webRequest
+    ) {
+
+        ErrorDetail errorDetails = new ErrorDetail(
+                LocalDateTime.now(),
+                exception.getMessage(),
+                webRequest.getDescription(false),
+                status.value()
+        );
+
+        return ResponseEntity
+                .status(status)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(errorDetails);
+    }
 
     @ExceptionHandler({ResourceNotFoundException.class})
     public ResponseEntity<ErrorDetail> handleResourceNotFoundException(
@@ -60,39 +116,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
         return ResponseEntity
                 .status(status)
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(errorDetails);
-    }
-
-    @Override
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(
-            MethodArgumentNotValidException exception,
-            @NotNull HttpHeaders headers,
-            @NotNull HttpStatusCode status,
-            WebRequest webRequest
-    ) {
-
-        List<String> errorMessages = new ArrayList<>();
-
-        exception.getBindingResult().getAllErrors().forEach((error) -> {
-            String message = error.getDefaultMessage();
-
-            errorMessages.add(message);
-        });
-
-        String joinedErrors = String.join(" ", errorMessages);
-
-        HttpStatus specificStatus = HttpStatus.UNPROCESSABLE_ENTITY;
-
-        ErrorDetail errorDetails = new ErrorDetail(
-                LocalDateTime.now(),
-                joinedErrors,
-                webRequest.getDescription(false),
-                specificStatus.value()
-        );
-
-        return ResponseEntity
-                .status(specificStatus)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(errorDetails);
     }

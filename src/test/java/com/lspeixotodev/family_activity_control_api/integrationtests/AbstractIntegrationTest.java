@@ -22,7 +22,6 @@ public class AbstractIntegrationTest {
         }
 
         private static Map<String, String> createConnectionConfiguration() {
-            System.out.println("Postgres: " + postgres);
             return Map.of(
                     "spring.datasource.url", postgres.getJdbcUrl(),
                     "spring.datasource.username", postgres.getUsername(),
