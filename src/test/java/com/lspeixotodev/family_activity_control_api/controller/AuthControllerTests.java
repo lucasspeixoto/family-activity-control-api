@@ -14,17 +14,6 @@ import org.springframework.test.context.ActiveProfiles;
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.*;
 
-/*
-* Integration tests use the same ApplicationContext (unless specifically set not to).
-* The issue with that is that one of the tests can make changes in the context that
-*  would affect the other integration tests, like changing state of some beans.
-* For this reason there is an annotation @DirtiesContext which restores/cleans the
-*  effects on the context after this specific test.
-* This annotation is computation expensive, therefore you should use it only when necessary.
-*
-* @author J Asgarov (https://stackoverflow.com/users/12038714/j-asgarov)
- */
-
 @SpringBootTest(
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
 )
@@ -33,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @DirtiesContext
 @ActiveProfiles("it")
 @DisplayName("Authentication Controller (Integration Tests)")
-public class AuthControllerTest extends AbstractIntegrationTest {
+public class AuthControllerTests extends AbstractIntegrationTest {
 
     @LocalServerPort
     int port;
